@@ -1,11 +1,14 @@
 package com.mart.cart_activity.Adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,6 +17,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners;
  // Make sure to import your R class
 import com.mart.cart_Activity.R;
+import com.mart.cart_activity.Activity.DetailActivity;
 import com.mart.cart_activity.domain.PopularDomain;
 
 import java.util.ArrayList;
@@ -36,7 +40,7 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.Viewhold
     }
 
     @Override
-    public void onBindViewHolder(@NonNull Viewholder holder, int position) {
+    public void onBindViewHolder(@NonNull Viewholder holder,int position) {
         // Bind data to the views inside the ViewHolder
         holder.titleText.setText(items.get(position).getTitle());
         holder.feeTxt.setText("$" + items.get(position).getPrice());
@@ -52,6 +56,11 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.Viewhold
             @Override
             public void onClick(View v) {
                 // Handle item click
+                showDetailsToast(items.get(position));
+                Intent intent = new Intent(context, DetailActivity.class);
+                intent.putExtra("object", items.get(position));
+
+                context.startActivity(intent);
             }
         });
     }
@@ -77,5 +86,9 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.Viewhold
             scoreTxt = itemView.findViewById(R.id.scoreTxt);
             pic = itemView.findViewById(R.id.pic);
         }
+    }
+    private void showDetailsToast(PopularDomain item) {
+        // Display a toast with item details
+        Toast.makeText(context, "Details: " + item.getTitle() + ", Price: $" + item.getPrice(), Toast.LENGTH_SHORT).show();
     }
 }

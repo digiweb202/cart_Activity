@@ -1,6 +1,8 @@
 package com.mart.cart_activity.domain;
 
-public class PopularDomain {
+import java.io.Serializable;
+
+public class PopularDomain implements Serializable {
     private String title;
     private String picUrl;
     private int review;
@@ -73,4 +75,5 @@ public class PopularDomain {
         this.description = description;
 
     }
+
 }
