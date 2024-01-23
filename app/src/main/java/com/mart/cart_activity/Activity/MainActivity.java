@@ -128,5 +128,5 @@ public class MainActivity extends AppCompatActivity {
 //        // Example: This is a placeholder. Replace it with your actual QR code generation logic.
 //        // For example, you can use a library like ZXing to generate QR codes.
 //        return ((BitmapDrawable) getResources().getDrawable(R.drawable.qrcode)).getBitmap();
-//    }
+//    }kljlk
 }
