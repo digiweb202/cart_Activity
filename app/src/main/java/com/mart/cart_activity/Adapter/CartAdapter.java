@@ -1,6 +1,5 @@
 package com.mart.cart_activity.Adapter;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -15,34 +14,34 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners;
- // Make sure to import your R class
 import com.mart.cart_Activity.R;
 import com.mart.cart_activity.Activity.DetailActivity;
 import com.mart.cart_activity.domain.PopularDomain;
 
 import java.util.ArrayList;
 
-public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.Viewholder> {
-    private ArrayList<PopularDomain> items;
-    private Context context;
+public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
-    public PopularAdapter(ArrayList<PopularDomain> items) {
+    private final ArrayList<PopularDomain> items;
+    private Context context = null;
+
+    public CartAdapter(ArrayList<PopularDomain> items) {
         this.items = items;
+        this.context = context;
     }
 
     @NonNull
     @Override
-    public Viewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // Inflate the view using LayoutInflater
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.viewholder_pup_list, parent, false);
-        context = parent.getContext();
-        return new Viewholder(itemView);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.viewholder_cart, parent, false);
+        return new ViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull Viewholder holder,int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         // Bind data to the views inside the ViewHolder
-        holder.titleText.setText(items.get(position).getTitle());
+        holder.titleTxt.setText(items.get(position).getTitle());
         holder.feeTxt.setText("$" + items.get(position).getPrice());
         holder.scoreTxt.setText(String.valueOf(items.get(position).getScore()));
 
@@ -70,23 +69,24 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.Viewhold
         return items.size();
     }
 
-    public class Viewholder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         // Declare views inside the ViewHolder
-        private final TextView titleText;
+        private final TextView titleTxt;
         private final TextView feeTxt;
-        final TextView scoreTxt;
+        private final TextView scoreTxt;
         private final ImageView pic;
 
-        public Viewholder(View itemView) {
+        public ViewHolder(View itemView) {
             super(itemView);
 
             // Initialize views
-            titleText = itemView.findViewById(R.id.titleText);
-            feeTxt = itemView.findViewById(R.id.feeTxt);
-            scoreTxt = itemView.findViewById(R.id.scoreTxt);
+            titleTxt = itemView.findViewById(R.id.titleTxt);
+            feeTxt = itemView.findViewById(R.id.feeEachItem);
+            scoreTxt = itemView.findViewById(R.id.totalEachItem);
             pic = itemView.findViewById(R.id.pic);
         }
     }
+
     private void showDetailsToast(PopularDomain item) {
         // Display a toast with item details
         Toast.makeText(context, "Details: " + item.getTitle() + ", Price: $" + item.getPrice(), Toast.LENGTH_SHORT).show();

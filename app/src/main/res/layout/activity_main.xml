@@ -314,6 +314,7 @@
                 android:layout_height="match_parent">
 
                 <LinearLayout
+                    android:id="@+id/explorerBtn"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="0.2"
@@ -337,6 +338,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/wishlistBtn"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="0.2"
@@ -381,6 +383,7 @@
 
 
                 <LinearLayout
+                    android:id="@+id/cartBtn"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="0.2"
@@ -404,6 +407,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/profilesBtn"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="0.2"
@@ -427,16 +431,18 @@
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.bottomappbar.BottomAppBar>
-
+        <!-- your_layout.xml -->
         <com.google.android.material.floatingactionbutton.FloatingActionButton
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/purple_dark"
-            android:src="@drawable/qrcode"
             android:contentDescription="Scan QR Code"
-        app:maxImageSize="30dp"
-        app:layout_anchor="@id/appBar"
-        app:tint="@color/white" />
+            android:src="@drawable/qrcode"
+            app:layout_anchor="@id/appBar"
+            app:maxImageSize="30dp"
+            app:tint="@color/white" />
+
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

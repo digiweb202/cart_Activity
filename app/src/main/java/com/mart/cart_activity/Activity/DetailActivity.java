@@ -2,6 +2,7 @@ package com.mart.cart_activity.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
@@ -29,6 +30,17 @@ public class DetailActivity extends AppCompatActivity {
         getBundles();
         setupUI();
         managmentCart= new ManagmentCart(this);
+        ImageView shareImageView = findViewById(R.id.imageView8);
+
+        // Set OnClickListener for shareImageView
+        shareImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Perform action when the shareImageView is clicked
+                shareContent(); // You can define this method to handle the click action
+            }
+        });
+
 
     }
 
@@ -46,6 +58,22 @@ public class DetailActivity extends AppCompatActivity {
 
     }
 
+
+    // Method to share content
+    private void shareContent() {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Your subject"); // Optional subject
+        shareIntent.putExtra(Intent.EXTRA_TEXT, "Your shared content goes here."); // Content to be shared
+
+        // Create a chooser to show available sharing apps
+        Intent chooserIntent = Intent.createChooser(shareIntent, "Share via");
+
+        // Check if there are apps that can handle the intent
+        if (shareIntent.resolveActivity(getPackageManager()) != null) {
+            startActivity(chooserIntent);
+        }
+    }
     private void setupUI() {
         if (object != null) {
             ImageView itemPic = findViewById(R.id.viewitem);
