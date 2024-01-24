@@ -5,4 +5,6 @@
     <color name="purple_dark">#521C98</color>
     <color name="purple_light">#A421D2</color>
     <color name="grey">#E9E9E9</color>
+    <color name="grey_btn">#749098B1</color>
+    <color name="blue_text">#223263</color>
 </resources>

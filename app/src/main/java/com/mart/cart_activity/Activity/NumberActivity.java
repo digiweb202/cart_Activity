@@ -10,22 +10,24 @@ import android.widget.Button;
 
 import com.mart.cart_Activity.R;
 
-public class SignupActivity extends AppCompatActivity {
-    private Button signup_btn;
+public class NumberActivity extends AppCompatActivity {
+    private Button btn_submit;
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signup);
-        signup_btn = findViewById(R.id.btn_signup);
-        signup_btn.setOnClickListener(new View.OnClickListener() {
+        setContentView(R.layout.activity_number);
+        btn_submit = findViewById(R.id.btn_submit);
+        btn_submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Intent intent = new Intent(SignupActivity.this,LoginActivity.class);
+                Intent intent = new Intent(NumberActivity.this,OtpActivity.class);
                 startActivity(intent);
+
             }
         });
+
 
     }
 }

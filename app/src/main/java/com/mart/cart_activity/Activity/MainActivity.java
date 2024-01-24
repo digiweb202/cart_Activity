@@ -122,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
 //        AlertDialog alertDialog = builder.create();
 //        alertDialog.show();
 //    }
+
 //
 //    // Implement your QR code generation logic here
 //    private Bitmap generateQRCode() {
