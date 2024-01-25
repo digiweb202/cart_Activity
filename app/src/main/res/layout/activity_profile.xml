@@ -25,6 +25,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="8dp"
+                    android:clickable="true"
                     app:srcCompat="@drawable/arrow" />
 
                 <TextView
@@ -56,7 +57,7 @@
                         android:layout_height="108dp"
                         android:layout_weight="1"
                         android:background="@drawable/circle_background"
-
+                        android:visibility="gone"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:srcCompat="@drawable/profilepic2" />
@@ -68,6 +69,7 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
                         android:text="Maximum Gold"
+
                         android:textColor="@color/black"
                         android:textStyle="bold"
                         app:layout_constraintStart_toEndOf="@+id/imageView4"
@@ -80,6 +82,20 @@
                         android:text="@string/usermark"
                         app:layout_constraintStart_toStartOf="@+id/textView9"
                         app:layout_constraintTop_toBottomOf="@+id/textView9" />
+
+                    <ImageView
+                        android:id="@+id/profileEdit"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:clickable="true"
+
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/box_edit_ic"
+                        app:tint="@color/blue_text" />
+
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </LinearLayout>
@@ -104,7 +120,7 @@
                         android:layout_marginTop="16dp"
                         android:layout_marginBottom="8dp"
                         android:layout_weight="1"
-                        android:src="@drawable/ic_gender"
+                        android:src="@drawable/address_ic"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -116,7 +132,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
                         android:layout_weight="1"
-                        android:text="Gender"
+                        android:text="Address"
                         android:textColor="@color/black"
                         android:textSize="18dp"
                         android:textStyle="bold"
@@ -129,7 +145,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
                         android:layout_weight="1"
-                        android:text="Male"
+                        android:text="Address..."
                         app:layout_constraintEnd_toStartOf="@+id/arrow1"
                         app:layout_constraintTop_toTopOf="@+id/arrow1" />
 
@@ -140,74 +156,76 @@
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="8dp"
                         android:layout_weight="1"
+                        android:visibility="invisible"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:srcCompat="@drawable/arrow_detail" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="20dp"
-                android:orientation="horizontal">
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:layout_marginTop="20dp"-->
+<!--                android:orientation="horizontal">-->
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
+<!--                <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_weight="1">-->
 
-                    <ImageView
-                        android:id="@+id/birthday"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
+<!--                    <ImageView-->
+<!--                        android:id="@+id/birthday"-->
+<!--                        android:layout_width="30dp"-->
+<!--                        android:layout_height="30dp"-->
 
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginBottom="8dp"
-                        android:layout_weight="1"
-                        android:src="@drawable/calender_ic"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:tint="@color/purple_dark" />
+<!--                        android:layout_marginStart="8dp"-->
+<!--                        android:layout_marginTop="16dp"-->
+<!--                        android:layout_marginBottom="8dp"-->
+<!--                        android:layout_weight="1"-->
+<!--                        android:src="@drawable/calender_ic"-->
+<!--                        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                        app:layout_constraintStart_toStartOf="parent"-->
+<!--                        app:layout_constraintTop_toTopOf="parent"-->
+<!--                        app:tint="@color/purple_dark" />-->
 
-                    <TextView
+<!--                    <TextView-->
 
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_weight="1"
-                        android:text="Birthday"
-                        android:textColor="@color/black"
-                        android:textSize="18dp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toEndOf="@+id/birthday"
-                        app:layout_constraintTop_toTopOf="@+id/birthday" />
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginStart="16dp"-->
+<!--                        android:layout_weight="1"-->
+<!--                        android:text="Birthday"-->
+<!--                        android:textColor="@color/black"-->
+<!--                        android:textSize="18dp"-->
+<!--                        android:textStyle="bold"-->
+<!--                        app:layout_constraintStart_toEndOf="@+id/birthday"-->
+<!--                        app:layout_constraintTop_toTopOf="@+id/birthday" />-->
 
-                    <TextView
+<!--                    <TextView-->
 
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:layout_weight="1"
-                        android:text="12-12-10"
-                        app:layout_constraintEnd_toStartOf="@+id/arrow2"
-                        app:layout_constraintTop_toTopOf="@+id/arrow2" />
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginEnd="8dp"-->
+<!--                        android:layout_weight="1"-->
+<!--                        android:text="12-12-10"-->
+<!--                        app:layout_constraintEnd_toStartOf="@+id/arrow2"-->
+<!--                        app:layout_constraintTop_toTopOf="@+id/arrow2" />-->
 
-                    <ImageView
-                        android:id="@+id/arrow2"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_weight="1"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/arrow_detail" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
+<!--                    <ImageView-->
+<!--                        android:id="@+id/arrow2"-->
+<!--                        android:layout_width="20dp"-->
+<!--                        android:layout_height="20dp"-->
+<!--                        android:layout_marginTop="16dp"-->
+<!--                        android:layout_marginEnd="8dp"-->
+<!--                        android:layout_weight="1"-->
+<!--                        android:visibility="invisible"-->
+<!--                        app:layout_constraintEnd_toEndOf="parent"-->
+<!--                        app:layout_constraintTop_toTopOf="parent"-->
+<!--                        app:srcCompat="@drawable/arrow_detail" />-->
+<!--                </androidx.constraintlayout.widget.ConstraintLayout>-->
 
-            </LinearLayout>
+<!--            </LinearLayout>-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -263,6 +281,7 @@
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="8dp"
                         android:layout_weight="1"
+                        android:visibility="invisible"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:srcCompat="@drawable/arrow_detail" />
@@ -325,6 +344,7 @@
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="8dp"
                         android:layout_weight="1"
+                        android:visibility="invisible"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:srcCompat="@drawable/arrow_detail" />
@@ -387,6 +407,7 @@
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="8dp"
                         android:layout_weight="1"
+                        android:visibility="invisible"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:srcCompat="@drawable/arrow_detail" />

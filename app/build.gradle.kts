@@ -52,4 +52,8 @@ dependencies {
 
 //    implementation ("com.github.EudyContreras.Skeleton-Bones:v1.3")
 
+//   image libary
+    implementation ("com.squareup.picasso:picasso:2.71828")
+
+
 }

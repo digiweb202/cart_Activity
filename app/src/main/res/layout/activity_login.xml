@@ -159,7 +159,7 @@
                     <LinearLayout
                         android:id="@+id/google_btn"
                         android:layout_width="match_parent"
-                        android:layout_height="40dp"
+                        android:layout_height="50dp"
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="32dp"
                         android:layout_marginEnd="16dp"
@@ -194,7 +194,7 @@
                     <LinearLayout
                         android:id="@+id/facebook_btn"
                         android:layout_width="match_parent"
-                        android:layout_height="40dp"
+                        android:layout_height="50dp"
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="12dp"
                         android:layout_marginEnd="16dp"
@@ -229,13 +229,13 @@
 
                     </LinearLayout>
                     <TextView
-                        android:id="@+id/textView26"
+                        android:id="@+id/forgottxtBtn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="32dp"
                         android:text="Forget Password"
                         android:textColor="@color/blue_text"
-
+                        android:clickable="true"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -248,9 +248,11 @@
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="20dp"
                         android:orientation="horizontal"
+                        android:clickable="true"
+                        android:id="@+id/signuptxtBtn"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/textView26">
+                        app:layout_constraintTop_toBottomOf="@+id/forgottxtBtn">
 
                         <TextView
                             android:id="@+id/textView27"

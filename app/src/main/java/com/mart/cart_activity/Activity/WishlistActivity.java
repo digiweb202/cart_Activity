@@ -5,8 +5,12 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.View;
+import android.widget.ImageView;
 
 import com.mart.cart_Activity.R;
 import com.mart.cart_activity.Adapter.ExplorerPopularAdapter;
@@ -17,12 +21,21 @@ import java.util.ArrayList;
 
 public class WishlistActivity extends AppCompatActivity {
     private RecyclerView popularRecyclerView;
-
+    private ImageView Backbtn;
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wishlist);
         initRecyclerView();
+        Backbtn = findViewById(R.id.wishlistBackBtn);
+        Backbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(WishlistActivity.this,MainActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void initRecyclerView() {
@@ -62,5 +75,14 @@ public class WishlistActivity extends AppCompatActivity {
     private int convertDpToPixel(int dp) {
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         return (int) (dp * metrics.density);
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Customize the behavior when the back button is pressed
+        // For example, you can navigate to another activity, show a dialog, etc.
+
+        // Add your custom code here
+        super.onBackPressed(); // If you want to perform the default back button behavior, remove this line
     }
 }
