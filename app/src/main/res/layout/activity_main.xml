@@ -348,7 +348,6 @@
                     android:textColor="@color/purple_light"
                     android:textStyle="bold" />
             </LinearLayout>
-
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/Clothsproduct"
                 android:layout_width="match_parent"

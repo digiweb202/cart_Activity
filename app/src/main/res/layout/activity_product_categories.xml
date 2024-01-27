@@ -188,9 +188,10 @@
 
                         <!-- Text Centered Below the Image -->
                         <TextView
+                            android:id="@+id/cards"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Digital"
+                            android:text="Digitals"
                             android:textSize="18sp"
                             android:layout_below="@id/cart1"
                             android:layout_marginTop="8dp"
@@ -226,6 +227,7 @@
 
                         <!-- Text Centered Below the Image -->
                         <TextView
+                            android:id="@+id/cards"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Cloths"
@@ -264,6 +266,7 @@
 
                         <!-- Text Centered Below the Image -->
                         <TextView
+                            android:id="@+id/cards"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Tools"
@@ -302,6 +305,7 @@
 
                         <!-- Text Centered Below the Image -->
                         <TextView
+                            android:id="@+id/cards"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Beauty"
@@ -340,6 +344,7 @@
 
                         <!-- Text Centered Below the Image -->
                         <TextView
+                            android:id="@+id/cards"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Cart1"
@@ -378,6 +383,7 @@
 
                         <!-- Text Centered Below the Image -->
                         <TextView
+                            android:id="@+id/cards"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Card 2"
@@ -416,6 +422,7 @@
 
                         <!-- Text Centered Below the Image -->
                         <TextView
+                            android:id="@+id/cards"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Card 3"
@@ -455,6 +462,7 @@
 
                         <!-- Text Centered Below the Image -->
                         <TextView
+                            android:id="@+id/cards"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Card 4"
