@@ -1,8 +1,10 @@
 package com.mart.cart_activity.Activity;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +22,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.mart.cart_activity.Adapter.CartAdapter;
 import com.mart.cart_activity.Helper.ManagmentCart;
 import com.mart.cart_Activity.R;
+
+import pl.droidsonroids.gif.GifImageButton;
 
 public class CartActivity extends AppCompatActivity {
     private ImageView Backbtn;
@@ -71,10 +75,43 @@ public class CartActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        Button orderButton = findViewById(R.id.button2);
+        orderButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showGifDialog();
+            }
+        });
         setVariables();
         initList();
     }
+    @SuppressLint("ResourceType")
+    private void showGifDialog() {
+        // Create a custom dialog
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.custom_dialog_layout_order);
+        GifImageButton gifImageView = new GifImageButton(this);
+        gifImageView.setImageResource(R.drawable.check);
+        // Set up the ImageView in the dialog
+//        ImageView gifImageView = dialog.findViewById(R.id.gif);
+        // You can load your GIF into the ImageView using a library like Glide or directly from resources
 
+        // Set up any other views or functionality as needed
+
+        // Show the dialog
+        dialog.show();
+
+        // Set up a Handler to dismiss the dialog after 2 seconds
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (dialog.isShowing()) {
+                    dialog.dismiss();
+                }
+            }
+        }, 3000); // 2000
+    }
     private void setVariables() {
 //        managementCart = new ManagmentCart(); // Initialize your ManagementCart class here
     }
