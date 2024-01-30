@@ -126,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
         initRecyclerView();
     }
 
@@ -182,7 +183,12 @@ private void showImageDialog() {
         // Load the image into the ImageView using Picasso
         ImageView imageView = dialogView.findViewById(R.id.dialogImageView);
         Picasso.get().load(imageUrl).into(imageView);
-
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                shareContent();
+            }
+        });
         // Create the dialog and set properties
         final AlertDialog dialog = builder.create();
         dialog.setCancelable(true); // Set to true to allow dismissing by clicking outside the dialog
@@ -208,6 +214,21 @@ private void showImageDialog() {
                 // Permission denied, display a message or take appropriate action
                 Toast.makeText(this, "Internet permission denied. Cannot load the image.", Toast.LENGTH_SHORT).show();
             }
+        }
+    }
+    // Method to share content
+    private void shareContent() {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Your subject"); // Optional subject
+        shareIntent.putExtra(Intent.EXTRA_TEXT, "Your shared content goes here."); // Content to be shared
+
+        // Create a chooser to show available sharing apps
+        Intent chooserIntent = Intent.createChooser(shareIntent, "Share via");
+
+        // Check if there are apps that can handle the intent
+        if (shareIntent.resolveActivity(getPackageManager()) != null) {
+            startActivity(chooserIntent);
         }
     }
 

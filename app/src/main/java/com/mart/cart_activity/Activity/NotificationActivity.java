@@ -1,4 +1,5 @@
 package com.mart.cart_activity.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +15,6 @@ import com.mart.cart_Activity.R;
 
 import java.util.ArrayList;
 import java.util.List;
-
 public class NotificationActivity extends AppCompatActivity {
 
     private RecyclerView notificationRecyclerView;
@@ -31,12 +31,22 @@ public class NotificationActivity extends AppCompatActivity {
         List<Notification> notifications = new ArrayList<>();
         notifications.add(new Notification("Notification Title 1", "Notification Message 1", "2 hours ago"));
         notifications.add(new Notification("Notification Title 2", "Notification Message 2", "1 day ago"));
+        notifications.add(new Notification("Notification Title 2", "Notification Message 2", "1 day ago"));
+        notifications.add(new Notification("Notification Title 2", "Notification Message 2", "1 day ago"));
+        notifications.add(new Notification("Notification Title 2", "Notification Message 2", "1 day ago"));
+        notifications.add(new Notification("Notification Title 2", "Notification Message 2", "1 day ago"));
+        notifications.add(new Notification("Notification Title 2", "Notification Message 2", "1 day ago"));
+        notifications.add(new Notification("Notification Title 2", "Notification Message 2", "1 day ago"));
+        notifications.add(new Notification("Notification Title 2", "Notification Message 2", "1 day ago"));
+        notifications.add(new Notification("Notification Title 2", "Notification Message 2", "1 day ago"));
+        notifications.add(new Notification("Notification Title 2", "Notification Message 2", "1 day ago"));
+
 
         NotificationAdapter notificationAdapter = new NotificationAdapter(notifications);
         notificationRecyclerView.setAdapter(notificationAdapter);
     }
 
-    private static class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.ViewHolder> {
+    private class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.ViewHolder> {
 
         private List<Notification> notifications;
 
@@ -57,6 +67,19 @@ public class NotificationActivity extends AppCompatActivity {
             holder.notificationTitle.setText(notification.getTitle());
             holder.notificationMessage.setText(notification.getMessage());
             holder.notificationTimestamp.setText(notification.getTimestamp());
+
+            // Set click listener for each notification item
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Handle notification click, for example, start a new activity
+                    Intent intent = new Intent(NotificationActivity.this, NotificationDetailsActivity.class);
+                    intent.putExtra("title", notification.getTitle());
+                    intent.putExtra("message", notification.getMessage());
+                    intent.putExtra("timestamp", notification.getTimestamp());
+                    startActivity(intent);
+                }
+            });
         }
 
         @Override
@@ -64,7 +87,7 @@ public class NotificationActivity extends AppCompatActivity {
             return notifications.size();
         }
 
-        public static class ViewHolder extends RecyclerView.ViewHolder {
+        public class ViewHolder extends RecyclerView.ViewHolder {
 
             TextView notificationTitle;
             TextView notificationMessage;

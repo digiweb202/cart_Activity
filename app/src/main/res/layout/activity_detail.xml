@@ -184,20 +184,37 @@
             android:textSize="16sp"
             android:text="Description:" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/buyBtn"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginTop="32dp"
-            android:layout_marginBottom="32dp"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
 
-            android:textColor="@color/white"
+          <androidx.appcompat.widget.AppCompatButton
+              android:id="@+id/buyBtn"
+              android:layout_width="150dp"
+              android:layout_height="wrap_content"
+              android:layout_marginStart="16dp"
+              android:layout_marginEnd="16dp"
+              android:padding="10dp"
+              android:layout_marginBottom="32dp"
+              android:background="@drawable/btn_background"
+              android:text="Add to Cart"
+              android:textColor="@color/white" />
 
+          <androidx.appcompat.widget.AppCompatButton
+              android:id="@+id/go_to_cart"
+              android:layout_width="150dp"
+              android:layout_height="wrap_content"
+              android:layout_marginStart="16dp"
+              android:layout_marginEnd="16dp"
+              android:layout_marginBottom="32dp"
+              android:background="@drawable/btn_border_go_to_cart"
+              android:text="Go to Cart"
+              android:textColor="@color/purple_dark" />
+        </LinearLayout>
 
-            android:background="@drawable/btn_background"
-            android:text="Button" />
       </LinearLayout>
     </ScrollView>
   </androidx.constraintlayout.widget.ConstraintLayout>

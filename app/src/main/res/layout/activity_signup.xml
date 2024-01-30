@@ -89,7 +89,7 @@
                         android:layout_width="0dp"
                         android:layout_height="0dp"
                         android:layout_marginTop="8dp"
-                        android:hint="Full Name"
+                        android:hint="Username"
                         app:endIconMode="clear_text"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHeight_percent="0.1"
@@ -110,7 +110,7 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
-                        android:hint="PASSWORD"
+                        android:hint="Password"
                         app:endIconMode="password_toggle"
 
                         app:layout_constraintEnd_toEndOf="parent"
@@ -136,7 +136,7 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
-                        android:hint="PASSWORD"
+                        android:hint="Confire Password"
                         app:endIconMode="password_toggle"
 
                         app:layout_constraintEnd_toEndOf="parent"

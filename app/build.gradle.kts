@@ -54,6 +54,8 @@ dependencies {
 
 //   image libary
     implementation ("com.squareup.picasso:picasso:2.71828")
+//  Volley libarary
+    implementation ("com.android.volley:volley:1.2.0")
 
 
 }

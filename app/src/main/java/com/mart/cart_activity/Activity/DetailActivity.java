@@ -2,6 +2,7 @@ package com.mart.cart_activity.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.media.Image;
 import android.os.Bundle;
@@ -21,7 +22,9 @@ public class DetailActivity extends AppCompatActivity {
     private PopularDomain object;
     private int numberOrder =1 ;
     private ManagmentCart managmentCart;
+    private Button gotocart;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,7 +34,16 @@ public class DetailActivity extends AppCompatActivity {
         setupUI();
         managmentCart= new ManagmentCart(this);
         ImageView shareImageView = findViewById(R.id.imageView8);
+        gotocart = findViewById(R.id.go_to_cart);
 
+
+        gotocart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(DetailActivity.this,CartActivity.class);
+                startActivity(intent);
+            }
+        });
         // Set OnClickListener for shareImageView
         shareImageView.setOnClickListener(new View.OnClickListener() {
             @Override
