@@ -62,5 +62,7 @@ dependencies {
 //    annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
     implementation ("pl.droidsonroids.gif:android-gif-drawable:1.2.28")
 
+    implementation ("com.google.android.gms:play-services-auth:20.7.0")
+
 
 }

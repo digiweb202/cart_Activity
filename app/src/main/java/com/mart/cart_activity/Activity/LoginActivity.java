@@ -1,10 +1,20 @@
 package com.mart.cart_activity.Activity;
 
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
+
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.IntentSenderRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -17,6 +27,19 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.auth.api.identity.BeginSignInRequest;
+import com.google.android.gms.auth.api.identity.BeginSignInResult;
+import com.google.android.gms.auth.api.identity.Identity;
+import com.google.android.gms.auth.api.identity.SignInClient;
+import com.google.android.gms.auth.api.identity.SignInCredential;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.mart.cart_Activity.R;
 
@@ -30,6 +53,16 @@ public class LoginActivity extends AppCompatActivity {
     private LinearLayout signupbtn;
 
     private TextInputEditText txtInput_user, txt_pass;
+
+    GoogleSignInOptions gso;
+    GoogleSignInClient gsc;
+
+    private SignInClient oneTapClient;
+    private BeginSignInRequest signUpRequest;
+    private  LinearLayout googlebtn;
+
+    private static final int REQ_ONE_TAP = 2;  // Can be any integer unique to the Activity.
+    private boolean showOneTapUI = true;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +73,76 @@ public class LoginActivity extends AppCompatActivity {
         signupbtn = findViewById(R.id.signuptxtBtn);
         txtInput_user = findViewById(R.id.txtInput_user);
         txt_pass = findViewById(R.id.txt_pass);
+        googlebtn = findViewById(R.id.google_btn);
 
+
+        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+        gsc = GoogleSignIn.getClient(this,gso);
+
+
+
+
+        oneTapClient = Identity.getSignInClient(this);
+        signUpRequest = BeginSignInRequest.builder()
+                .setGoogleIdTokenRequestOptions(BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
+                        .setSupported(true)
+                        // Your server's client ID, not your Android client ID.
+                        .setServerClientId(getString(R.string.webClientId))
+                        // Show all accounts on the device.
+                        .setFilterByAuthorizedAccounts(false)
+                        .build())
+                .build();
+
+        ActivityResultLauncher<IntentSenderRequest> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartIntentSenderForResult(), new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult o) {
+                try{
+                    SignInCredential credential = oneTapClient.getSignInCredentialFromIntent(o.getData());
+                    String idToken = credential.getGoogleIdToken();
+                    if (idToken != null){
+                        String email = credential.getId();
+                        String name = credential.getDisplayName();
+                        Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+                        intent.putExtra("keyEmail", email);
+                        intent.putExtra("keyName",name);
+
+                        startActivity(intent);
+                        Toast.makeText(getApplicationContext(),"Email"+email,Toast.LENGTH_SHORT).show();
+
+                    }
+                } catch (ApiException e){
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        googlebtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+//                signin();
+//                IntentSenderRequest intentSenderRequest = new IntentSenderRequest.Builder(o.getPendingIntent()).build();
+
+
+                oneTapClient.beginSignIn(signUpRequest)
+                        .addOnSuccessListener(LoginActivity.this, new OnSuccessListener<BeginSignInResult>() {
+                            @Override
+                            public void onSuccess(BeginSignInResult result) {
+
+                                    IntentSenderRequest intentSenderRequest= new IntentSenderRequest.Builder(result.getPendingIntent().getIntentSender()).build();
+                                    activityResultLauncher.launch(intentSenderRequest);
+
+                            }
+                        })
+                        .addOnFailureListener(LoginActivity.this, new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                // No Google Accounts found. Just continue presenting the signed-out UI.
+                                Log.d(TAG, e.getLocalizedMessage());
+                            }
+                        });
+            }
+        });
         signupbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,6 +165,38 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    void signin(){
+        Intent signInIntent = gsc.getSignInIntent();
+        startActivityForResult(signInIntent,1000);
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 1000){
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+
+            //application Try and Catches related work Exception related work adding here
+            try {
+                task.getResult(ApiException.class);
+                nevigateToSecondActivity();
+            } catch (ApiException e) {
+                //application will be implimation related Toast work
+                //application try Catche
+                Toast.makeText(getApplicationContext(),"Something went wrong",Toast.LENGTH_SHORT).show();
+
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    void nevigateToSecondActivity(){
+        finish();
+        Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+        startActivity(intent);
     }
     private void authenticateUser() {
         String email = txtInput_user.getText().toString().trim();

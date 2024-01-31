@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -20,6 +21,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mart.cart_Activity.R;
 import com.mart.cart_activity.Adapter.PopularAdapter;
@@ -28,6 +33,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 public class MainActivity extends AppCompatActivity {
@@ -37,11 +43,17 @@ public class MainActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_INTERNET = 1;
     private LinearLayout categoreisAllbtn;
     private ImageView notificationBtn;
+    GoogleSignInOptions gso;
+    GoogleSignInClient gsc;
+    private TextView personname;
+    private Button signoutbtn;
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);  // Set the content view using the layout resource ID
+
 
         LinearLayout cartBtn = findViewById(R.id.cartBtn);
         LinearLayout wishlist = findViewById(R.id.wishlistBtn);
@@ -49,6 +61,23 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout profileBtn = findViewById(R.id.profilesBtn);
         categoreisAllbtn = findViewById(R.id.categoriesbtn);
         notificationBtn = findViewById(R.id.notificationbtn);
+        personname = findViewById(R.id.personName);
+
+        Intent intent = getIntent();
+        String data = intent.getStringExtra("keyName");
+        personname.setText(data);
+
+        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+        gsc = GoogleSignIn.getClient(this,gso);
+
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
+
+        if(acct != null){
+            String personName = acct.getDisplayName();
+            String personEmail = acct.getEmail();
+            personname.setText(personName);
+        }
+        //SignOut Method
 
 
 //        FloatingActionButton fab = findViewById(R.id.qrBtn);
