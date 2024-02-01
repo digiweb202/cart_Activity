@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -42,6 +43,9 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.mart.cart_Activity.R;
+import com.mart.cart_activity.Database.Databases;
+import com.mart.cart_activity.Databaseinitializers.DatabaseInitializers;
+import com.mart.cart_activity.Entities.UserEntities;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,6 +67,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final int REQ_ONE_TAP = 2;  // Can be any integer unique to the Activity.
     private boolean showOneTapUI = true;
+
+    Databases myDatabase;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +84,7 @@ public class LoginActivity extends AppCompatActivity {
 
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
         gsc = GoogleSignIn.getClient(this,gso);
-
+        myDatabase = DatabaseInitializers.getInstance(getApplicationContext());
 
 
 
@@ -161,6 +167,15 @@ public class LoginActivity extends AppCompatActivity {
         login_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                String username = txtInput_user.getText().toString();
+                String password = txt_pass.getText().toString();
+                UserEntities user1 = new UserEntities(username, password);
+
+                // Perform database operation in a background thread
+                new InsertPersonTask().execute(user1);
+                Toast.makeText(LoginActivity.this,"Successfully Login",Toast.LENGTH_SHORT).show();
+
                 Intent intent = new Intent(LoginActivity.this,ForgetPassActivity.class);
                 startActivity(intent);
             }
@@ -237,5 +252,20 @@ public class LoginActivity extends AppCompatActivity {
 
         // Add the request to the RequestQueue
         Volley.newRequestQueue(this).add(jsonObjectRequest);
+    }
+    private class InsertPersonTask extends AsyncTask<UserEntities, Void, Void> {
+        @Override
+        protected Void doInBackground(UserEntities... users) {
+            myDatabase.getPersonDAO().addPerson(users[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            // Update UI or perform post-execution logic if needed
+            txtInput_user.setText("");
+            txt_pass.setText("");
+        }
     }
 }

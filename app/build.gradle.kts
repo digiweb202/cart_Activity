@@ -65,4 +65,18 @@ dependencies {
     implementation ("com.google.android.gms:play-services-auth:20.7.0")
 
 
+//    room database
+
+    implementation ("androidx.room:room-runtime:2.6.1")
+    annotationProcessor ("androidx.room:room-compiler:2.6.1")
+
+//    ViewModel
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0")
+
+    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0")
+
+    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.4.0")
+
+
+
 }
