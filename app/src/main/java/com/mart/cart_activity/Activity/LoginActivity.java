@@ -9,6 +9,8 @@ import androidx.activity.result.IntentSenderRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -46,9 +48,12 @@ import com.mart.cart_Activity.R;
 import com.mart.cart_activity.Database.Databases;
 import com.mart.cart_activity.Databaseinitializers.DatabaseInitializers;
 import com.mart.cart_activity.Entities.UserEntities;
+import com.mart.cart_activity.Model.UserViewModel;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
     private Button login_btn;
@@ -64,10 +69,12 @@ public class LoginActivity extends AppCompatActivity {
     private SignInClient oneTapClient;
     private BeginSignInRequest signUpRequest;
     private  LinearLayout googlebtn;
-
+    private Button Btn_update;
+    private Button Btn_show;
+    private Button Btn_Delete;
     private static final int REQ_ONE_TAP = 2;  // Can be any integer unique to the Activity.
     private boolean showOneTapUI = true;
-
+    UserViewModel userViewModel;
     Databases myDatabase;
     @SuppressLint("MissingInflatedId")
     @Override
@@ -164,22 +171,113 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+//        login_btn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                String username = txtInput_user.getText().toString();
+//                String password = txt_pass.getText().toString();
+//                UserEntities updatedUser = new UserEntities(1, username, password); // Assuming 1 is the user ID to update
+//
+//                // Perform database operation in a background thread
+//                new UpdatePersonTask().execute(updatedUser);
+//
+//                Toast.makeText(LoginActivity.this,"Successfully Login",Toast.LENGTH_SHORT).show();
+//
+//                Intent intent = new Intent(LoginActivity.this,ForgetPassActivity.class);
+//                startActivity(intent);
+//            }
+//        });
         login_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 String username = txtInput_user.getText().toString();
                 String password = txt_pass.getText().toString();
-                UserEntities user1 = new UserEntities(username, password);
 
-                // Perform database operation in a background thread
-                new InsertPersonTask().execute(user1);
-                Toast.makeText(LoginActivity.this,"Successfully Login",Toast.LENGTH_SHORT).show();
-
-                Intent intent = new Intent(LoginActivity.this,ForgetPassActivity.class);
-                startActivity(intent);
+                // Perform database operation in a background thread to check if username exists
+                new CheckUserTask().execute();
             }
         });
+
+//        Btn_show.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                userViewModel = new ViewModelProvider(LoginActivity.this).get(UserViewModel.class);
+//
+//                userViewModel.getAllPersons().observe(LoginActivity.this, new Observer<List<UserEntities>>() {
+//                    @Override
+//                    public void onChanged(List<UserEntities> users) {
+//                        // Find the user with ID 1
+//                        UserEntities userWithId1 = null;
+//                        for (UserEntities user : users) {
+//                            if (user.getId() == 1) {
+//                                userWithId1 = user;
+//                                break;
+//                            }
+//                        }
+//
+//                        // Display the information for the user with ID 1
+//                        if (userWithId1 != null) {
+//                            StringBuilder data = new StringBuilder();
+//                            String Name =  userWithId1.getName();
+//                            String Password = userWithId1.getAge();
+//                            data.append("ID: ").append(userWithId1.getId()).append(", Name: ")
+//                                    .append(userWithId1.getName()).append(", Age: ")
+//                                    .append(userWithId1.getAge()).append("\n");
+//
+//                            Toast.makeText(LoginActivity.this, data.toString(), Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//                });
+//
+//
+//            }
+//        });
+//        Btn_update.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                // Replace with the actual user ID you want to update
+//                int userIdToObserve = 1;
+//
+//                // Observe changes to the single user LiveData
+//                UserViewModel.getPersonById(userIdToObserve).observe(LoginActivity.this, new Observer<UserEntities>() {
+//                    @Override
+//                    public void onChanged(UserEntities userToUpdate) {
+//                        if (userToUpdate != null) {
+//                            // Perform the update
+//                            userToUpdate.setName("Updated Name");
+//                            userToUpdate.setAge("Updated Age");
+//                            UserViewModel.update(userToUpdate);
+//                        }
+//                    }
+//                });
+//            }
+//        });
+//        Btn_Delete.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                // Replace with the actual user ID you want to delete
+//                int userIdToDelete = 1;
+//
+//                // Perform the delete operation in a background thread
+//                new DeletePersonTask().execute(userIdToDelete);
+//            }
+//        });
+    }
+    // AsyncTask to delete a person in the background
+    private class DeletePersonTask extends AsyncTask<Integer, Void, Void> {
+        @Override
+        protected Void doInBackground(Integer... userIds) {
+            myDatabase.getPersonDAO().deletePersonById(userIds[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            // Update UI or perform post-execution logic if needed
+            // You can refresh the UI or show a message after deletion
+        }
     }
 
     void signin(){
@@ -253,10 +351,69 @@ public class LoginActivity extends AppCompatActivity {
         // Add the request to the RequestQueue
         Volley.newRequestQueue(this).add(jsonObjectRequest);
     }
-    private class InsertPersonTask extends AsyncTask<UserEntities, Void, Void> {
+
+//    private class InsertPersonTask extends AsyncTask<UserEntities, Void, Void> {
+//        @Override
+//        protected Void doInBackground(UserEntities... users) {
+//            myDatabase.getPersonDAO().addPerson(users[0]);
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//            // Update UI or perform post-execution logic if needed
+//            txtInput_user.setText("");
+//            txt_pass.setText("");
+//        }
+//    }
+//    private class UpdatePersonTask extends AsyncTask<UserEntities, Void, Void> {
+//        @Override
+//        protected Void doInBackground(UserEntities... users) {
+//            // Assuming users[0] contains the data you want to update for the user with ID 1
+//            myDatabase.getPersonDAO().updatePerson(users[0]);
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//            // Update UI or perform post-execution logic if needed
+//            txtInput_user.setText("");
+//            txt_pass.setText("");
+//        }
+//    }
+private class CheckUserTask extends AsyncTask<Void, Void, UserEntities> {
+    @Override
+    protected UserEntities doInBackground(Void... voids) {
+        // Check if the user with ID 1 exists in the database
+        return myDatabase.getPersonDAO().getUserById(1);
+    }
+
+    @Override
+    protected void onPostExecute(UserEntities user) {
+        if (user != null && user.getName().equals(txtInput_user.getText().toString()) &&
+                user.getAge().equals(txt_pass.getText().toString())) {
+            // Username and password match, update the user
+            UserEntities updatedUser = new UserEntities(1, user.getName(), user.getAge());
+            new UpdatePersonTask().execute(updatedUser);
+
+            Toast.makeText(LoginActivity.this, "Successfully Login", Toast.LENGTH_SHORT).show();
+
+            Intent intent = new Intent(LoginActivity.this, ForgetPassActivity.class);
+            startActivity(intent);
+        } else {
+            // Username or password is incorrect
+            Toast.makeText(LoginActivity.this, "Invalid User Data", Toast.LENGTH_SHORT).show();
+        }
+    }
+}
+
+
+    private class UpdatePersonTask extends AsyncTask<UserEntities, Void, Void> {
         @Override
         protected Void doInBackground(UserEntities... users) {
-            myDatabase.getPersonDAO().addPerson(users[0]);
+            myDatabase.getPersonDAO().updatePerson(users[0]);
             return null;
         }
 

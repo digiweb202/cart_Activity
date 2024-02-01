@@ -18,7 +18,7 @@ public class UserRepository {
 
     public UserRepository(Databases Mydatabase) {
         personDAO = Mydatabase.getPersonDAO();
-        allPersons = (LiveData<List<UserEntities>>) personDAO.getAllPerson();
+        allPersons = personDAO.getAllPerson();
     }
 
     public LiveData<List<UserEntities>> getAllPersons() {
@@ -28,7 +28,9 @@ public class UserRepository {
     public void insert(UserEntities user) {
         new InsertPersonAsyncTask(personDAO).execute(user);
     }
-
+    public void update(UserEntities user) {
+        new UpdatePersonAsyncTask(personDAO).execute(user);
+    }
     private static class InsertPersonAsyncTask extends AsyncTask<UserEntities, Void, Void> {
         private UserDao personDAO;
 
@@ -42,4 +44,22 @@ public class UserRepository {
             return null;
         }
     }
+    private static class UpdatePersonAsyncTask extends AsyncTask<UserEntities, Void, Void> {
+        private UserDao personDAO;
+
+        private UpdatePersonAsyncTask(UserDao personDAO) {
+            this.personDAO = personDAO;
+        }
+
+        @Override
+        protected Void doInBackground(UserEntities... users) {
+            personDAO.updatePerson(users[0]);
+            return null;
+        }
+    }
+    public LiveData<UserEntities> getPersonById(int personId) {
+        return personDAO.getPersonById(personId);
+    }
+
+
 }

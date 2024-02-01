@@ -4,11 +4,10 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
+@Entity(tableName = "userprofile")
+public class UserDataEntities {
 
-@Entity(tableName = "userlogin")
-public class UserEntities {
-
-    @ColumnInfo(name = "person_id")
+    @ColumnInfo(name = "id")
     @PrimaryKey(autoGenerate = true)
     long id;
 
@@ -43,13 +42,13 @@ public class UserEntities {
     }
 
     @Ignore
-    public UserEntities(long id, String name, String age) {
+    public UserDataEntities(long id, String name, String age) {
         this.id = id;
         this.name = name;
         this.age = age;
     }
 
-    public UserEntities(String name, String age) {
+    public UserDataEntities(String name, String age) {
         this.name = name;
         this.age = age;
     }

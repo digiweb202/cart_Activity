@@ -18,6 +18,8 @@ import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,10 +30,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mart.cart_Activity.R;
 import com.mart.cart_activity.Adapter.PopularAdapter;
+import com.mart.cart_activity.Entities.UserEntities;
+import com.mart.cart_activity.Model.UserViewModel;
 import com.mart.cart_activity.domain.PopularDomain;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     GoogleSignInClient gsc;
     private TextView personname;
     private Button signoutbtn;
-
+    UserViewModel userViewModel;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,9 +68,9 @@ public class MainActivity extends AppCompatActivity {
         notificationBtn = findViewById(R.id.notificationbtn);
         personname = findViewById(R.id.personName);
 
-        Intent intent = getIntent();
-        String data = intent.getStringExtra("keyName");
-        personname.setText(data);
+//        Intent intent = getIntent();
+//        String data = intent.getStringExtra("keyName");
+//        personname.setText(data);
 
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
         gsc = GoogleSignIn.getClient(this,gso);
@@ -155,7 +160,34 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        userViewModel = new ViewModelProvider(MainActivity.this).get(UserViewModel.class);
 
+        userViewModel.getAllPersons().observe(MainActivity.this, new Observer<List<UserEntities>>() {
+            @Override
+            public void onChanged(List<UserEntities> users) {
+                // Find the user with ID 1
+                UserEntities userWithId1 = null;
+                for (UserEntities user : users) {
+                    if (user.getId() == 1) {
+                        userWithId1 = user;
+                        break;
+                    }
+                }
+
+                // Display the information for the user with ID 1
+                if (userWithId1 != null) {
+                    StringBuilder data = new StringBuilder();
+                    String Name =  userWithId1.getName();
+                    String Password = userWithId1.getAge();
+                    personname.setText(Name);
+                    data.append("ID: ").append(userWithId1.getId()).append(", Name: ")
+                            .append(userWithId1.getName()).append(", Age: ")
+                            .append(userWithId1.getAge()).append("\n");
+
+                    Toast.makeText(MainActivity.this, data.toString(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
         initRecyclerView();
     }
 
