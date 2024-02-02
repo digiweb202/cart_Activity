@@ -66,8 +66,7 @@ dependencies {
 
 
 //    room database
-
-    implementation ("androidx.room:room-runtime:2.6.1")
+     implementation ("androidx.room:room-runtime:2.6.1")
     annotationProcessor ("androidx.room:room-compiler:2.6.1")
 
 //    ViewModel
@@ -76,6 +75,19 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0")
 
     implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.4.0")
+
+    // Retrofit and Gson
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    // ViewModel and LiveData
+    implementation ("androidx.lifecycle:lifecycle-viewmodel:2.3.1")
+    implementation ("androidx.lifecycle:lifecycle-livedata:2.3.1")
+    implementation ("androidx.lifecycle:lifecycle-common-java8:2.3.1")
+    // ViewModel Factory
+    implementation ("androidx.lifecycle:lifecycle-viewmodel:2.3.1")
+    implementation ("androidx.lifecycle:lifecycle-common-java8:2.3.1")
+    // Retrofit Logging (optional)
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.9.1")
 
 
 

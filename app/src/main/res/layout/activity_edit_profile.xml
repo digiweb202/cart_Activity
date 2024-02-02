@@ -195,11 +195,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/txtLay_pass" />
 
-                <!-- Add
-                your submit
-                button or any
-                other controls 
-                as needed -->
+
 
             </LinearLayout>
 

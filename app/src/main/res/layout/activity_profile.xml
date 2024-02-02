@@ -63,7 +63,7 @@
                         app:srcCompat="@drawable/profilepic2" />
 
                     <TextView
-                        android:id="@+id/textView9"
+                        android:id="@+id/username"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
@@ -80,8 +80,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/usermark"
-                        app:layout_constraintStart_toStartOf="@+id/textView9"
-                        app:layout_constraintTop_toBottomOf="@+id/textView9" />
+                        app:layout_constraintStart_toStartOf="@+id/username"
+                        app:layout_constraintTop_toBottomOf="@+id/username" />
 
                     <ImageView
                         android:id="@+id/profileEdit"

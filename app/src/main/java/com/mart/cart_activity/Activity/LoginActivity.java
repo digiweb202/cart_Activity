@@ -392,15 +392,14 @@ private class CheckUserTask extends AsyncTask<Void, Void, UserEntities> {
 
     @Override
     protected void onPostExecute(UserEntities user) {
-        if (user != null && user.getName().equals(txtInput_user.getText().toString()) &&
-                user.getAge().equals(txt_pass.getText().toString())) {
+        if (user != null && user.getName().equals(txtInput_user.getText().toString()) && user.getAge().equals(txt_pass.getText().toString())) {
             // Username and password match, update the user
             UserEntities updatedUser = new UserEntities(1, user.getName(), user.getAge());
             new UpdatePersonTask().execute(updatedUser);
 
             Toast.makeText(LoginActivity.this, "Successfully Login", Toast.LENGTH_SHORT).show();
 
-            Intent intent = new Intent(LoginActivity.this, ForgetPassActivity.class);
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
         } else {
             // Username or password is incorrect
