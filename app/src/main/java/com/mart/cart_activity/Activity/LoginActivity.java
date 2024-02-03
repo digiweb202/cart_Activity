@@ -193,7 +193,10 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String username = txtInput_user.getText().toString();
                 String password = txt_pass.getText().toString();
+                UserEntities user1 = new UserEntities(username, password);
 
+                // Perform database operation in a background thread
+                new InsertPersonTask().execute(user1);
                 // Perform database operation in a background thread to check if username exists
                 new CheckUserTask().execute();
             }
@@ -352,37 +355,37 @@ public class LoginActivity extends AppCompatActivity {
         Volley.newRequestQueue(this).add(jsonObjectRequest);
     }
 
-//    private class InsertPersonTask extends AsyncTask<UserEntities, Void, Void> {
-//        @Override
-//        protected Void doInBackground(UserEntities... users) {
-//            myDatabase.getPersonDAO().addPerson(users[0]);
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Void aVoid) {
-//            super.onPostExecute(aVoid);
-//            // Update UI or perform post-execution logic if needed
-//            txtInput_user.setText("");
-//            txt_pass.setText("");
-//        }
-//    }
-//    private class UpdatePersonTask extends AsyncTask<UserEntities, Void, Void> {
-//        @Override
-//        protected Void doInBackground(UserEntities... users) {
-//            // Assuming users[0] contains the data you want to update for the user with ID 1
-//            myDatabase.getPersonDAO().updatePerson(users[0]);
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Void aVoid) {
-//            super.onPostExecute(aVoid);
-//            // Update UI or perform post-execution logic if needed
-//            txtInput_user.setText("");
-//            txt_pass.setText("");
-//        }
-//    }
+    private class InsertPersonTask extends AsyncTask<UserEntities, Void, Void> {
+        @Override
+        protected Void doInBackground(UserEntities... users) {
+            myDatabase.getPersonDAO().addPerson(users[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            // Update UI or perform post-execution logic if needed
+            txtInput_user.setText("");
+            txt_pass.setText("");
+        }
+    }
+    private class UpdatePersonTask extends AsyncTask<UserEntities, Void, Void> {
+        @Override
+        protected Void doInBackground(UserEntities... users) {
+            // Assuming users[0] contains the data you want to update for the user with ID 1
+            myDatabase.getPersonDAO().updatePerson(users[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            // Update UI or perform post-execution logic if needed
+            txtInput_user.setText("");
+            txt_pass.setText("");
+        }
+    }
 private class CheckUserTask extends AsyncTask<Void, Void, UserEntities> {
     @Override
     protected UserEntities doInBackground(Void... voids) {
@@ -409,19 +412,19 @@ private class CheckUserTask extends AsyncTask<Void, Void, UserEntities> {
 }
 
 
-    private class UpdatePersonTask extends AsyncTask<UserEntities, Void, Void> {
-        @Override
-        protected Void doInBackground(UserEntities... users) {
-            myDatabase.getPersonDAO().updatePerson(users[0]);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            // Update UI or perform post-execution logic if needed
-            txtInput_user.setText("");
-            txt_pass.setText("");
-        }
-    }
+//    private class UpdatePersonTask extends AsyncTask<UserEntities, Void, Void> {
+//        @Override
+//        protected Void doInBackground(UserEntities... users) {
+//            myDatabase.getPersonDAO().updatePerson(users[0]);
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//            // Update UI or perform post-execution logic if needed
+//            txtInput_user.setText("");
+//            txt_pass.setText("");
+//        }
+//    }
 }

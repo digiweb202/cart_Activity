@@ -1,119 +1,106 @@
 package com.mart.cart_activity.Activity;
 
+import static androidx.core.content.ContextCompat.startActivity;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.annotation.RequiresApi;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 public class SmsVerification extends AsyncTask<Void, Void, String> {
-    private Context context;
-    private String phoneNumber;
-    private String verificationCode;  // New field for verification code
 
-    private String response;
+    private String mobileNumber;
+    private String otpCode;
 
-    // Constructor to receive the context, phone number, and verification code
-    public SmsVerification(Context context, String phoneNumber, String verificationCode) {
+    private Context context; // Added Context instance variable
+
+    // Modified constructor to accept Context
+    public SmsVerification(Context context, String mobileNumber, String otpCode) {
         this.context = context;
-        this.phoneNumber = phoneNumber;
-        this.verificationCode = verificationCode;
+        this.mobileNumber = mobileNumber;
+        this.otpCode = otpCode;
     }
 
     @Override
-    protected String doInBackground(Void... voids) {
+    protected String doInBackground(Void... params) {
         try {
-            // Construct the URL with the API endpoint and use phoneNumber and the provided verification code
-            URL url = new URL("http://www.smsalert.co.in/api/mverify.json?apikey=63fcb0bd68ec3&mobileno=8780719280&code=5515");
-                Log.e("APIAPI",url.toString());
-            // Open a connection to the URL
+            // Replace with your actual URL
+            String apiUrl = "https://www.smsalert.co.in/api/mverify.json?apikey=63fcb0bd68ec3&mobileno=" + mobileNumber + "&code=" + otpCode;
+            URL url = new URL(apiUrl);
+            Log.e("URL","URL"+ url);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("POST");
 
-            try {
-                // Read the response
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                StringBuilder stringBuilder = new StringBuilder();
+            int statusCode = urlConnection.getResponseCode();
 
+            if (statusCode == 200) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                StringBuilder response = new StringBuilder();
                 String line;
-                while ((line = bufferedReader.readLine()) != null) {
-                    stringBuilder.append(line).append("\n");
-                }
 
-                bufferedReader.close();
-                return stringBuilder.toString();
-            } finally {
-                // Close the connection
-                urlConnection.disconnect();
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+                   Log.e("responsesActivitySms",response.toString());
+                    handleApiResponse(response.toString());
+                return response.toString();
+            } else {
+                return "Unexpected HTTP status: " + statusCode + " " + urlConnection.getResponseMessage();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+        } catch (IOException e) {
+            return "Error: " + e.getMessage();
         }
     }
-    public String getResponse() {
-        Log.e("APIresponse",response.toString());
 
-        return response;
-    }
     @Override
     protected void onPostExecute(String result) {
-        // Handle the result here
-        Log.e("result",result.toString());
-        if (result != null) {
-            // Parse the JSON response
-            try {
-                JSONObject jsonResponse = new JSONObject(result);
-                String status = jsonResponse.getString("status");
-                String description = jsonResponse.getString("description");
+        // Handle the API response in the UI thread
+        Log.d("SmsVerification", "Response: " + result);
+        // You can perform any further processing here
+    }
+    private void handleApiResponse(String response) {
+        try {
+            JSONObject jsonResponse = new JSONObject(response);
+            String status = jsonResponse.optString("status", "");
+            JSONObject description = jsonResponse.optJSONObject("description");
 
-                // Display a Toast with the description
-                Toast.makeText(context, description, Toast.LENGTH_SHORT).show();
+            if ("success".equals(status) && description != null) {
+                String desc = description.optString("desc", "");
 
-                // You can also use 'status' for further handling based on the API response
-                if ("success".equals(status)) {
-                    response = "success";
-
-                    // Check if 'desc' property exists
-                    if (jsonResponse.has("description")) {
-                        String desc = jsonResponse.getJSONObject("description").getString("desc");
-                        Log.d("SmsVerification", "Description: " + desc);
-                    }
-
-                    Intent intent = new Intent(context, OtpActivity.class);
-                    intent.putExtra("phoneNumber", phoneNumber);
-                    context.startActivity(intent);
-                } else if ("error".equals(status)) {
-                    // Handle the case where the status is 'error'
-                    Log.e("SmsVerification", "Request failed. Description: " + description);
-                } else {
-                    // Handle other cases
-                    Log.d("SmsVerification", "Request successful. Description: " + description);
+                if ("Code Matched successfully.".equals(desc)) {
+                    // Start LoginActivity using the stored Context
+                    context.startActivity(new Intent(context, LoginActivity.class));
+                    return; // Exit the method if the conditions are met
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
-                // Handle JSON parsing error
-                Log.e("SmsVerification", "JSON parsing error");
             }
-        } else {
-            // Handle the case where the request failed
-            Log.e("SmsVerification", "Request failed");
+
+            // Handle other cases if needed
+            Log.e("SmsVerification", "Verification failed or conditions not met: " + response);
+
+        } catch (JSONException e) {
+            // Handle JSON parsing error
+            Log.e("SmsVerification", "Error parsing JSON: " + e.getMessage());
         }
     }
-
 
 }

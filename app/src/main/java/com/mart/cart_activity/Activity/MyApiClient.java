@@ -39,6 +39,7 @@ public class MyApiClient extends AsyncTask<Void, Void, String> {
 
             // Construct the URL with the API endpoint and use phoneNumber
             URL url = new URL("https://www.smsalert.co.in/api/mverify.json?apikey=63fcb0bd68ec3&sender=NWECOM&mobileno=" + phoneNumber + "&template=" + template);
+            Log.e("URL","URL"+url);
 
             // Open a connection to the URL
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
@@ -69,6 +70,9 @@ public class MyApiClient extends AsyncTask<Void, Void, String> {
     }
     @Override
     protected void onPostExecute(String result) {
+        // Display a Toast with the description
+//        Toast.makeText(context, result, Toast.LENGTH_SHORT).show();
+        Toast.makeText(context,"Max OTP limit reached,Please 15 Minutes after try Again",Toast.LENGTH_SHORT).show();
         // Handle the result here
         if (result != null) {
             // Parse the JSON response
@@ -108,6 +112,7 @@ public class MyApiClient extends AsyncTask<Void, Void, String> {
 //                    }
                 } else if ("error".equals(status)) {
                     // Handle the case where the status is 'error'
+                    Toast.makeText(context,"Max OTP limit reached,Please 15 Minutes after try Again",Toast.LENGTH_SHORT).show();
                     Log.e("MyApiClient", "Request failed. Description: " + description);
                 } else {
                     // Handle other cases

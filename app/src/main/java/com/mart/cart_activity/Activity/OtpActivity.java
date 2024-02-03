@@ -5,38 +5,61 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Telephony;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.android.volley.toolbox.HttpResponse;
 import com.mart.cart_Activity.R;
+import com.mart.cart_activity.Api.ApiClient;
+import com.mart.cart_activity.Api.ApiService;
 import com.mart.cart_activity.OtpEditText;
 import com.mart.cart_activity.Activity.SmsVerification;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+
+import okhttp3.Callback;
+import okhttp3.Response;
+import retrofit2.Call;
 public class OtpActivity extends AppCompatActivity {
     private Button btn_submit;
     private OtpEditText otpedit;
-    @SuppressLint("MissingInflatedId")
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_otp);
-        btn_submit = findViewById(R.id.btn_submit);
-        otpedit = findViewById(R.id.et_otp);
 
+        btn_submit = findViewById(R.id.Btn_click);
+        otpedit = findViewById(R.id.et_otp);
 
         btn_submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String phoneNumber = "8780719280";  // replace with the actual phone number
-                String verificationCode = "5515";    // replace with the actual verification code
+                Toast.makeText(OtpActivity.this,"OTPActivity",Toast.LENGTH_SHORT).show();
+                String phoneNumber = getIntent().getStringExtra("phoneNumber");
+                Log.d("ReceivedPhoneNumber", "Phone Number: " + phoneNumber);
 
-                SmsVerification smsVerification = new SmsVerification(OtpActivity.this, phoneNumber, verificationCode);
-                smsVerification.execute();
-                Toast.makeText(OtpActivity.this, "Click event Perform", Toast.LENGTH_SHORT).show();
-                //Intent intent = new Intent(OtpActivity.this, LoginActivity.class);
-                //startActivity(intent);
+                String mobileNumber = phoneNumber; // Replace with your actual mobile number
+                String otpCode = otpedit.getText().toString(); // Replace with your actual OTP
+                Log.e("OTPCode",otpCode);
+
+                  new SmsVerification(OtpActivity.this, mobileNumber, otpCode).execute();
+
             }
         });
+
+
+
     }
+
+    // Move this method outside the onClick method
+
 }
