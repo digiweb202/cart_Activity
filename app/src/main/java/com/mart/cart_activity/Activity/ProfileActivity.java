@@ -50,34 +50,34 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
 
-        userViewModel = new ViewModelProvider(ProfileActivity.this).get(UserViewModel.class);
-
-        userViewModel.getAllPersons().observe(ProfileActivity.this, new Observer<List<UserEntities>>() {
-            @Override
-            public void onChanged(List<UserEntities> users) {
-                // Find the user with ID 1
-                UserEntities userWithId1 = null;
-                for (UserEntities user : users) {
-                    if (user.getId() == 1) {
-                        userWithId1 = user;
-                        break;
-                    }
-                }
-
-                // Display the information for the user with ID 1
-                if (userWithId1 != null) {
-                    StringBuilder data = new StringBuilder();
-                    String Name =  userWithId1.getName();
-                    String Password = userWithId1.getAge();
-                    UserName.setText(Name);
-//                    data.append("ID: ").append(userWithId1.getId()).append(", Name: ")
-//                            .append(userWithId1.getName()).append(", Age: ")
-//                            .append(userWithId1.getAge()).append("\n");
+//        userViewModel = new ViewModelProvider(ProfileActivity.this).get(UserViewModel.class);
 //
-//                    Toast.makeText(ProfileActivity.this, data.toString(), Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+//        userViewModel.getAllPersons().observe(ProfileActivity.this, new Observer<List<UserEntities>>() {
+//            @Override
+//            public void onChanged(List<UserEntities> users) {
+//                // Find the user with ID 1
+//                UserEntities userWithId1 = null;
+//                for (UserEntities user : users) {
+//                    if (user.getId() == 1) {
+//                        userWithId1 = user;
+//                        break;
+//                    }
+//                }
+//
+//                // Display the information for the user with ID 1
+//                if (userWithId1 != null) {
+//                    StringBuilder data = new StringBuilder();
+//                    String Name =  userWithId1.getName();
+//                    String Password = userWithId1.getAge();
+//                    UserName.setText(Name);
+////                    data.append("ID: ").append(userWithId1.getId()).append(", Name: ")
+////                            .append(userWithId1.getName()).append(", Age: ")
+////                            .append(userWithId1.getAge()).append("\n");
+////
+////                    Toast.makeText(ProfileActivity.this, data.toString(), Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
         Backbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

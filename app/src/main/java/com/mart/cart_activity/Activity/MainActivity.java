@@ -31,7 +31,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mart.cart_Activity.R;
 import com.mart.cart_activity.Adapter.PopularAdapter;
 import com.mart.cart_activity.Entities.UserEntities;
+import com.mart.cart_activity.Entities.UserSignupEntities;
 import com.mart.cart_activity.Model.UserViewModel;
+import com.mart.cart_activity.Repository.UserSignupRepository;
 import com.mart.cart_activity.domain.PopularDomain;
 import com.squareup.picasso.Picasso;
 
@@ -53,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView personname;
     private Button signoutbtn;
     UserViewModel userViewModel;
+    private UserSignupRepository userSignupRepository;
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,34 +164,51 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        userViewModel = new ViewModelProvider(MainActivity.this).get(UserViewModel.class);
+//        userViewModel = new ViewModelProvider(MainActivity.this).get(UserViewModel.class);
+//
+//        userViewModel.getAllPersons().observe(MainActivity.this, new Observer<List<UserEntities>>() {
+//            @Override
+//            public void onChanged(List<UserEntities> users) {
+//                // Find the user with ID 1
+//                UserEntities userWithId1 = null;
+//                for (UserEntities user : users) {
+//                    if (user.getId() == 1) {
+//                        userWithId1 = user;
+//                        break;
+//                    }
+//                }
+//
+//                // Display the information for the user with ID 1
+//                if (userWithId1 != null) {
+//                    StringBuilder data = new StringBuilder();
+//                    String Name =  userWithId1.getName();
+//                    String Password = userWithId1.getAge();
+//                    personname.setText(Name);
+//                    data.append("ID: ").append(userWithId1.getId()).append(", Name: ")
+//                            .append(userWithId1.getName()).append(", Age: ")
+//                            .append(userWithId1.getAge()).append("\n");
+//
+//                    Toast.makeText(MainActivity.this, data.toString(), Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
 
-        userViewModel.getAllPersons().observe(MainActivity.this, new Observer<List<UserEntities>>() {
+        userSignupRepository = new UserSignupRepository(getApplication());
+
+        // Example: Observe changes in user data for ID 1
+        userSignupRepository.getUserById(1).observe(this, new Observer<UserSignupEntities>() {
             @Override
-            public void onChanged(List<UserEntities> users) {
-                // Find the user with ID 1
-                UserEntities userWithId1 = null;
-                for (UserEntities user : users) {
-                    if (user.getId() == 1) {
-                        userWithId1 = user;
-                        break;
-                    }
-                }
-
-                // Display the information for the user with ID 1
-                if (userWithId1 != null) {
-                    StringBuilder data = new StringBuilder();
-                    String Name =  userWithId1.getName();
-                    String Password = userWithId1.getAge();
-                    personname.setText(Name);
-                    data.append("ID: ").append(userWithId1.getId()).append(", Name: ")
-                            .append(userWithId1.getName()).append(", Age: ")
-                            .append(userWithId1.getAge()).append("\n");
-
-                    Toast.makeText(MainActivity.this, data.toString(), Toast.LENGTH_SHORT).show();
+            public void onChanged(UserSignupEntities user) {
+                if (user != null) {
+                    // Handle user data here
+                    String username = user.getUsername();
+                    String email = user.getEmail();
+                    personname.setText(username);
+                    // ...
                 }
             }
         });
+
         initRecyclerView();
     }
 

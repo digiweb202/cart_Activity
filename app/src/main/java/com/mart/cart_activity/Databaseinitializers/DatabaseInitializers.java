@@ -8,25 +8,25 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-import com.mart.cart_activity.Database.Databases;
+import com.mart.cart_activity.Database.AppDatabase;
 
 public class DatabaseInitializers {
 
 
     private static final String DATABASE_NAME = "Persondb";
-    private static Databases instance;
+    private static AppDatabase instance;
 
-    public static synchronized Databases getInstance(Context context) {
+    public static synchronized AppDatabase getInstance(Context context) {
         if (instance == null) {
             instance = buildDatabase(context);
         }
         return instance;
     }
 
-    private static Databases buildDatabase(final Context context) {
+    private static AppDatabase buildDatabase(final Context context) {
         return Room.databaseBuilder(
                         context.getApplicationContext(),
-                        Databases.class,
+                        AppDatabase.class,
                         DATABASE_NAME
                 )
                 .addCallback(new RoomDatabase.Callback() {

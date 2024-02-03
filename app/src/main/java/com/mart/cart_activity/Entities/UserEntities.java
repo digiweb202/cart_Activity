@@ -5,10 +5,10 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "userlogin")
+@Entity(tableName = "userSignup")
 public class UserEntities {
 
-    @ColumnInfo(name = "person_id")
+    @ColumnInfo(name = "id")
     @PrimaryKey(autoGenerate = true)
     long id;
 

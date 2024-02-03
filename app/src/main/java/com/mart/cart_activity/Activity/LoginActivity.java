@@ -45,14 +45,17 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.mart.cart_Activity.R;
-import com.mart.cart_activity.Database.Databases;
+import com.mart.cart_activity.Database.AppDatabase;
 import com.mart.cart_activity.Databaseinitializers.DatabaseInitializers;
 import com.mart.cart_activity.Entities.UserEntities;
+import com.mart.cart_activity.Entities.UserSignupEntities;
 import com.mart.cart_activity.Model.UserViewModel;
+import com.mart.cart_activity.Repository.UserSignupRepository;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
@@ -75,7 +78,8 @@ public class LoginActivity extends AppCompatActivity {
     private static final int REQ_ONE_TAP = 2;  // Can be any integer unique to the Activity.
     private boolean showOneTapUI = true;
     UserViewModel userViewModel;
-    Databases myDatabase;
+    AppDatabase myDatabase;
+    private UserSignupRepository userSignupRepository;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +96,7 @@ public class LoginActivity extends AppCompatActivity {
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
         gsc = GoogleSignIn.getClient(this,gso);
         myDatabase = DatabaseInitializers.getInstance(getApplicationContext());
+        userSignupRepository = new UserSignupRepository(getApplication());
 
 
 
@@ -105,7 +110,7 @@ public class LoginActivity extends AppCompatActivity {
                         .setFilterByAuthorizedAccounts(false)
                         .build())
                 .build();
-
+            //google authentication related ActivityResultLuncher
         ActivityResultLauncher<IntentSenderRequest> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartIntentSenderForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override
             public void onActivityResult(ActivityResult o) {
@@ -191,14 +196,29 @@ public class LoginActivity extends AppCompatActivity {
         login_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String username = txtInput_user.getText().toString();
-                String password = txt_pass.getText().toString();
-                UserEntities user1 = new UserEntities(username, password);
 
-                // Perform database operation in a background thread
-                new InsertPersonTask().execute(user1);
+//                UserEntities user1 = new UserEntities(username, password);
+//
+//                // Perform database operation in a background thread
+//                new InsertPersonTask().execute(user1);
                 // Perform database operation in a background thread to check if username exists
-                new CheckUserTask().execute();
+//                new CheckUserTask().execute();
+                String usernames = txtInput_user.getText().toString();
+                String passwords = txt_pass.getText().toString();
+
+//                // Check login credentials using the loginUser query
+//                UserSignupEntities user = userSignupRepository.loginUser(usernames, passwords);
+//
+//                if (user != null) {
+//                    // Successful login
+//                    Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
+//                    // Add your logic to navigate to the next screen or perform other actions
+//                } else {
+//                    // Invalid credentials
+//                    Toast.makeText(LoginActivity.this, "Invalid Username or Password", Toast.LENGTH_SHORT).show();
+//                }
+                // Perform login asynchronously
+                new LoginAsyncTask(userSignupRepository).execute(usernames, passwords);
             }
         });
 
@@ -268,20 +288,20 @@ public class LoginActivity extends AppCompatActivity {
 //        });
     }
     // AsyncTask to delete a person in the background
-    private class DeletePersonTask extends AsyncTask<Integer, Void, Void> {
-        @Override
-        protected Void doInBackground(Integer... userIds) {
-            myDatabase.getPersonDAO().deletePersonById(userIds[0]);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            // Update UI or perform post-execution logic if needed
-            // You can refresh the UI or show a message after deletion
-        }
-    }
+//    private class DeletePersonTask extends AsyncTask<Integer, Void, Void> {
+//        @Override
+//        protected Void doInBackground(Integer... userIds) {
+//            myDatabase.getPersonDAO().deletePersonById(userIds[0]);
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//            // Update UI or perform post-execution logic if needed
+//            // You can refresh the UI or show a message after deletion
+//        }
+//    }
 
     void signin(){
         Intent signInIntent = gsc.getSignInIntent();
@@ -355,63 +375,63 @@ public class LoginActivity extends AppCompatActivity {
         Volley.newRequestQueue(this).add(jsonObjectRequest);
     }
 
-    private class InsertPersonTask extends AsyncTask<UserEntities, Void, Void> {
-        @Override
-        protected Void doInBackground(UserEntities... users) {
-            myDatabase.getPersonDAO().addPerson(users[0]);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            // Update UI or perform post-execution logic if needed
-            txtInput_user.setText("");
-            txt_pass.setText("");
-        }
-    }
-    private class UpdatePersonTask extends AsyncTask<UserEntities, Void, Void> {
-        @Override
-        protected Void doInBackground(UserEntities... users) {
-            // Assuming users[0] contains the data you want to update for the user with ID 1
-            myDatabase.getPersonDAO().updatePerson(users[0]);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            // Update UI or perform post-execution logic if needed
-            txtInput_user.setText("");
-            txt_pass.setText("");
-        }
-    }
-private class CheckUserTask extends AsyncTask<Void, Void, UserEntities> {
-    @Override
-    protected UserEntities doInBackground(Void... voids) {
-        // Check if the user with ID 1 exists in the database
-        return myDatabase.getPersonDAO().getUserById(1);
-    }
-
-    @Override
-    protected void onPostExecute(UserEntities user) {
-        if (user != null && user.getName().equals(txtInput_user.getText().toString()) && user.getAge().equals(txt_pass.getText().toString())) {
-            // Username and password match, update the user
-            UserEntities updatedUser = new UserEntities(1, user.getName(), user.getAge());
-            new UpdatePersonTask().execute(updatedUser);
-
-            Toast.makeText(LoginActivity.this, "Successfully Login", Toast.LENGTH_SHORT).show();
-
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(intent);
-        } else {
-            // Username or password is incorrect
-            Toast.makeText(LoginActivity.this, "Invalid User Data", Toast.LENGTH_SHORT).show();
-        }
-    }
-}
-
-
+//    private class InsertPersonTask extends AsyncTask<UserEntities, Void, Void> {
+//        @Override
+//        protected Void doInBackground(UserEntities... users) {
+//            myDatabase.getPersonDAO().addPerson(users[0]);
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//            // Update UI or perform post-execution logic if needed
+//            txtInput_user.setText("");
+//            txt_pass.setText("");
+//        }
+//    }
+//    private class UpdatePersonTask extends AsyncTask<UserEntities, Void, Void> {
+//        @Override
+//        protected Void doInBackground(UserEntities... users) {
+//            // Assuming users[0] contains the data you want to update for the user with ID 1
+//            myDatabase.getPersonDAO().updatePerson(users[0]);
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//            // Update UI or perform post-execution logic if needed
+//            txtInput_user.setText("");
+//            txt_pass.setText("");
+//        }
+//    }
+//private class CheckUserTask extends AsyncTask<Void, Void, UserEntities> {
+//    @Override
+//    protected UserEntities doInBackground(Void... voids) {
+//        // Check if the user with ID 1 exists in the database
+//        return myDatabase.getPersonDAO().getUserById(1);
+//    }
+//
+//    @Override
+//    protected void onPostExecute(UserEntities user) {
+//        if (user != null && user.getName().equals(txtInput_user.getText().toString()) && user.getAge().equals(txt_pass.getText().toString())) {
+//            // Username and password match, update the user
+//            UserEntities updatedUser = new UserEntities(1, user.getName(), user.getAge());
+//            new UpdatePersonTask().execute(updatedUser);
+//
+//            Toast.makeText(LoginActivity.this, "Successfully Login", Toast.LENGTH_SHORT).show();
+//
+//            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+//            startActivity(intent);
+//        } else {
+//            // Username or password is incorrect
+//            Toast.makeText(LoginActivity.this, "Invalid User Data", Toast.LENGTH_SHORT).show();
+//        }
+//    }
+//}
+//
+//
 //    private class UpdatePersonTask extends AsyncTask<UserEntities, Void, Void> {
 //        @Override
 //        protected Void doInBackground(UserEntities... users) {
@@ -427,4 +447,38 @@ private class CheckUserTask extends AsyncTask<Void, Void, UserEntities> {
 //            txt_pass.setText("");
 //        }
 //    }
+
+
+
+    private class LoginAsyncTask extends AsyncTask<String, Void, UserSignupEntities> {
+        private WeakReference<UserSignupRepository> repositoryReference;
+
+        LoginAsyncTask(UserSignupRepository repository) {
+            repositoryReference = new WeakReference<>(repository);
+        }
+
+        @Override
+        protected UserSignupEntities doInBackground(String... params) {
+            UserSignupRepository repository = repositoryReference.get();
+            if (repository != null) {
+                return repository.loginUser(params[0], params[1]);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(UserSignupEntities user) {
+            // Handle the result, for example, navigate to the next screen
+            if (user != null) {
+                // Successful login
+                Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+                startActivity(intent);
+                // Add your logic to navigate to the next screen or perform other actions
+            } else {
+                // Invalid credentials
+                Toast.makeText(LoginActivity.this, "Invalid Username or Password", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 }
