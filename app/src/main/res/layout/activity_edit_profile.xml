@@ -66,6 +66,27 @@
                         android:hint="Full Name" />
 
                 </com.google.android.material.textfield.TextInputLayout>
+                <!-- UserName -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilUsername"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:startIconDrawable="@drawable/person_ic"
+                    app:startIconContentDescription="Full Name">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etUsername"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="UserName"
+                        android:inputType="none"
+                        android:focusable="false"
+                        android:clickable="false"
+                        android:longClickable="false"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- Nick Name -->
                 <com.google.android.material.textfield.TextInputLayout
@@ -100,7 +121,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textEmailAddress"
-                        android:hint="Email" />
+                        android:hint="Email"
+                        android:focusable="false"
+                        android:clickable="false"
+                        android:longClickable="false"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -119,6 +143,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="phone"
+                        android:maxLength="10"
                         android:hint="Number" />
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -179,7 +204,7 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_login"
+                    android:id="@+id/btn_submit"
                     style="@style/Widget.MaterialComponents.Button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

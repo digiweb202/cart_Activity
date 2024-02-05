@@ -1,6 +1,8 @@
 package com.mart.cart_activity.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -62,26 +64,64 @@ public class SignupActivity extends AppCompatActivity {
         signup_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String username = Etd_username.getText().toString();
-                String email = Etd_email.getText().toString();
-                String password = Etd_pass.getText().toString();
+                // Get input values
+                String username = Etd_username.getText().toString().trim();
+                String email = Etd_email.getText().toString().trim();
+                String password = Etd_pass.getText().toString().trim();
+                String confirmPassword = Etd_confirm_pass.getText().toString().trim();
 
-//                UserSignupEntities newUser = new UserSignupEntities(username,email,password);
-////                newUser.setUsername(username);
-////                newUser.setEmail(email);
-////                newUser.setPassword(password);
-//
-//                userSignupRepository.insert(newUser);
+                // Validate username not empty
+                if (username.isEmpty()) {
+                    Etd_username.setError("Username cannot be empty");
+                    return;
+                }
 
-                // Create a UserSignupEntities object with the updated information
-                UserSignupEntities updatedUser = new UserSignupEntities(1, username, email, password);
+                // Validate email format
+                if (!isValidEmail(email)) {
+                    Etd_email.setError("Enter a valid email address");
+                    return;
+                }
 
-                // Update the user in the database
-                userSignupRepository.updateUser(updatedUser);
-                Intent intent = new Intent(SignupActivity.this,LoginActivity.class);
-                startActivity(intent);
+                // Validate password and confirm password match
+                if (!isValidPassword(password, confirmPassword)) {
+                    Etd_confirm_pass.setError("Passwords do not match");
+                    return;
+                }
+
+                // Check if the user already exists in the database
+                LiveData<UserSignupEntities> existingUserLiveData = userSignupRepository.getUserById(1);
+                existingUserLiveData.observe(SignupActivity.this, new Observer<UserSignupEntities>() {
+                    @Override
+                    public void onChanged(UserSignupEntities existingUser) {
+                        if (existingUser != null) {
+                            // User exists, update the information
+                            existingUser.setUsername(username);
+                            existingUser.setEmail(email);
+                            existingUser.setPassword(password);
+                            userSignupRepository.updateUser(existingUser);
+                        } else {
+                            // User does not exist, create a new user and insert into the database
+                            UserSignupEntities newUser = new UserSignupEntities(username, email, password);
+                            userSignupRepository.insert(newUser);
+                        }
+
+                        Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                    }
+                });
             }
         });
 
+// Email validation method
+
+
+    }
+    private boolean isValidEmail(String email) {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
+
+    // Password validation method
+    private boolean isValidPassword(String password, String confirmPassword) {
+        return password.equals(confirmPassword);
     }
 }

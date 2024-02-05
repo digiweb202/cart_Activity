@@ -225,11 +225,11 @@ public class MainActivity extends AppCompatActivity {
         popularRecyclerView = findViewById(R.id.PopularView);
         digitalRecyclearView = findViewById(R.id.Digitalproduct);
         clothRecyclerView = findViewById(R.id.Clothsproduct);
-// Set up the LinearLayoutManager for PopularView
+        // Set up the LinearLayoutManager for PopularView
         LinearLayoutManager popularLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         popularRecyclerView.setLayoutManager(popularLayoutManager);
 
-// Set up the LinearLayoutManager for Digitalproduct
+        // Set up the LinearLayoutManager for Digitalproduct
         LinearLayoutManager digitalLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         digitalRecyclearView.setLayoutManager(digitalLayoutManager);
 

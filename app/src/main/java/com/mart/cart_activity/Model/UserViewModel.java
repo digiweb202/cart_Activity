@@ -5,43 +5,29 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.room.Room;
 
+import com.mart.cart_activity.Dao.UserSignupDao;
 import com.mart.cart_activity.Database.AppDatabase;
-import com.mart.cart_activity.Entities.UserEntities;
-import com.mart.cart_activity.Repository.UserRepository;
+import com.mart.cart_activity.Entities.UserSignupEntities;
+import com.mart.cart_activity.Repository.UserSignupRepository;
 
-import java.util.List;
+public class UserViewModel extends AndroidViewModel {
+    private UserSignupRepository userSignupRepository;
+    private UserSignupDao userSignupDao;
 
-public class UserViewModel  extends AndroidViewModel {
     public UserViewModel(@NonNull Application application) {
         super(application);
+
+        AppDatabase database = AppDatabase.getInstance(application);
+        userSignupDao = database.userSignupDao();
+        userSignupRepository = new UserSignupRepository(application); // Initialize the repository
     }
-//
-//    private static UserRepository repository;
-//
-//    private LiveData<List<UserEntities>> allPersons;
-//
-//    public UserViewModel(Application application) {
-//        super(application);
-//        AppDatabase Mydatabase = Room.databaseBuilder(application, AppDatabase.class, "Persondb").build();
-//        repository = new UserRepository(Mydatabase);
-//        allPersons = repository.getAllPersons();
-//    }
-//
-//    public LiveData<List<UserEntities>> getAllPersons() {
-//        return allPersons;
-//    }
-//
-//    public void insert(UserEntities user) {
-//        repository.insert(user);
-//    }
-//
-//    public static void update(UserEntities user) {
-//        repository.update(user);
-//    }
-//
-//    public static LiveData<UserEntities> getPersonById(int personId) {
-//        return repository.getPersonById(personId);
-//    }
+
+    public LiveData<UserSignupEntities> getUserById(int userId) {
+        return userSignupDao.getUserById(userId);
+    }
+
+    public void updateUser(UserSignupEntities user) {
+        userSignupRepository.updateUser(user);
+    }
 }

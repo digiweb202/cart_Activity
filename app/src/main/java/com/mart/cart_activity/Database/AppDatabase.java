@@ -10,7 +10,7 @@ import com.mart.cart_activity.Dao.UserDao;
 import com.mart.cart_activity.Dao.UserSignupDao;
 import com.mart.cart_activity.Entities.UserSignupEntities;
 
-@Database(entities = {UserSignupEntities.class}, version = 2, exportSchema = false)
+@Database(entities = {UserSignupEntities.class}, version = 3, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase instances;
 

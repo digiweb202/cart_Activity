@@ -18,6 +18,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.mart.cart_Activity.R;
 import com.mart.cart_activity.Entities.UserEntities;
+import com.mart.cart_activity.Entities.UserSignupEntities;
 import com.mart.cart_activity.Model.UserViewModel;
 
 import java.util.List;
@@ -28,6 +29,10 @@ public class ProfileActivity extends AppCompatActivity {
     GoogleSignInOptions gso;
     GoogleSignInClient gsc;
     private TextView UserName;
+    private TextView txtaddress;
+    private TextView txtemail;
+    private TextView txtnumber;
+    private TextView txtnikname;
     UserViewModel userViewModel;
     @SuppressLint("MissingInflatedId")
     @Override
@@ -36,7 +41,14 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
         EditProfileBtn = findViewById(R.id.profileEdit);
         Backbtn = findViewById(R.id.backBtn);
-        UserName = findViewById(R.id.username);
+        UserName = findViewById(R.id.usernametxt);
+        txtaddress = findViewById(R.id.addresstxt);
+        txtemail = findViewById(R.id.emailtxt);
+        txtnumber = findViewById(R.id.numbertxt);
+        txtnikname = findViewById(R.id.niknametxt);
+
+
+
 
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
         gsc = GoogleSignIn.getClient(this,gso);
@@ -48,6 +60,26 @@ public class ProfileActivity extends AppCompatActivity {
             String personEmail = acct.getEmail();
             UserName.setText(personName);
         }
+
+        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+        int userId = 1;
+
+        userViewModel.getUserById(userId).observe(this, new Observer<UserSignupEntities>() {
+            @Override
+            public void onChanged(UserSignupEntities user) {
+                if (user != null) {
+                    // Populate the UI fields with the user data
+
+                    txtaddress.setText(user.getAddress());
+                    txtemail.setText(user.getEmail());
+                    txtnumber.setText(user.getNumber());
+                    UserName.setText(user.getUsername());
+                    String userNickname = user.getNikname();
+                    txtnikname.setText(userNickname != null ? "@" + userNickname : "@");
+
+                }
+            }
+        });
 
 
 //        userViewModel = new ViewModelProvider(ProfileActivity.this).get(UserViewModel.class);

@@ -205,19 +205,17 @@ public class LoginActivity extends AppCompatActivity {
 //                new CheckUserTask().execute();
                 String usernames = txtInput_user.getText().toString();
                 String passwords = txt_pass.getText().toString();
+                // Validate the username and password fields
+                if (usernames.isEmpty()) {
+                    txtInput_user.setError("Username is required");
+                    return;
+                }
 
-//                // Check login credentials using the loginUser query
-//                UserSignupEntities user = userSignupRepository.loginUser(usernames, passwords);
-//
-//                if (user != null) {
-//                    // Successful login
-//                    Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
-//                    // Add your logic to navigate to the next screen or perform other actions
-//                } else {
-//                    // Invalid credentials
-//                    Toast.makeText(LoginActivity.this, "Invalid Username or Password", Toast.LENGTH_SHORT).show();
-//                }
-                // Perform login asynchronously
+                if (passwords.isEmpty()) {
+                    txt_pass.setError("Password is required");
+                    return;
+                }
+
                 new LoginAsyncTask(userSignupRepository).execute(usernames, passwords);
             }
         });
