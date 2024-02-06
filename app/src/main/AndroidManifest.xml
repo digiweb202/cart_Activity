@@ -60,6 +60,7 @@
             android:exported="false" />
         <activity
             android:name="com.mart.cart_activity.Activity.ProfileActivity"
+
             android:exported="false" />
         <activity
             android:name="com.mart.cart_activity.Activity.ExplorerActivity"

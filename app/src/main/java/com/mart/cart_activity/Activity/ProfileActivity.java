@@ -132,5 +132,8 @@ public class ProfileActivity extends AppCompatActivity {
 
         // Add your custom code here
         super.onBackPressed(); // If you want to perform the default back button behavior, remove this line
+//        Toast.makeText(this,"Home Screen",Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(ProfileActivity.this,MainActivity.class);
+        startActivity(intent);
     }
 }

@@ -15,7 +15,8 @@ import com.mart.cart_Activity.R;
 
 import java.util.ArrayList;
 import java.util.List;
-public class NotificationActivity extends AppCompatActivity {
+public class
+NotificationActivity extends AppCompatActivity {
 
     private RecyclerView notificationRecyclerView;
 
