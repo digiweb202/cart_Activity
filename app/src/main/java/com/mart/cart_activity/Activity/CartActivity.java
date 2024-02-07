@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -26,13 +25,16 @@ import com.mart.cart_Activity.R;
 
 import pl.droidsonroids.gif.GifImageButton;
 
-public class CartActivity extends AppCompatActivity {
+import java.util.ArrayList;
+
+public class CartActivity extends AppCompatActivity implements CartAdapter.CartAdapterListener {
+
     private ImageView Backbtn;
     private ImageView ProfileEdit;
-    private  ImageView Method_Payment;
+    private ImageView Method_Payment;
     private ManagmentCart managementCart;
     private TextView textView22;
-    private  ImageView openDialogButton;
+    private ImageView openDialogButton;
     private TextView Payment;
     private TextView textview22;
     private TextView TotalTaxTotal;
@@ -41,7 +43,9 @@ public class CartActivity extends AppCompatActivity {
 
     private TextView TotalTax;
     private TextView TotalAmount;
-    double tax;
+    private double tax;
+    private CartAdapter cartAdapter;
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,48 +59,48 @@ public class CartActivity extends AppCompatActivity {
         TotalTaxTotal = findViewById(R.id.totalFeeTxt);
         DeliveryTax = findViewById(R.id.deliveryTxt);
         TotalTax = findViewById(R.id.taxTxt);
-        TotalAmount= findViewById(R.id.totalTxt);
+        TotalAmount = findViewById(R.id.totalTxt);
 
-
-
-        // Assuming you have a button to open the payment method dialog
         openDialogButton = findViewById(R.id.payment_method);
 
         openDialogButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Show the payment method dialog
                 showPaymentMethodDialog();
-                Log.e("CartActivity_Payment_Method","Button is working//:");
             }
         });
+
         Payment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showPaymentMethodDialog();
-                Toast.makeText(CartActivity.this,"Payment Option",Toast.LENGTH_SHORT).show();
+                Toast.makeText(CartActivity.this, "Payment Option", Toast.LENGTH_SHORT).show();
             }
         });
+
         Method_Payment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                // Handle Method_Payment click
             }
         });
+
         ProfileEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(CartActivity.this,EditProfileActivity.class);
+                Intent intent = new Intent(CartActivity.this, EditProfileActivity.class);
                 startActivity(intent);
             }
         });
+
         Backbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(CartActivity.this,MainActivity.class);
+                Intent intent = new Intent(CartActivity.this, MainActivity.class);
                 startActivity(intent);
             }
         });
+
         Button orderButton = findViewById(R.id.button2);
         orderButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,72 +108,28 @@ public class CartActivity extends AppCompatActivity {
                 showGifDialog();
             }
         });
+
         setVariables();
         initList();
         setupRecyclerView();
         calculatorCart();
     }
+
     private void setVariables() {
-        managementCart = new ManagmentCart(this); // Assuming ManagmentCart constructor takes a Context parameter
+        managementCart = new ManagmentCart(this);
     }
-
-    @SuppressLint("ResourceType")
-    private void showGifDialog() {
-        // Create a custom dialog
-        Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.custom_dialog_layout_order);
-        GifImageButton gifImageView = new GifImageButton(this);
-        gifImageView.setImageResource(R.drawable.check);
-        // Set up the ImageView in the dialog
-//        ImageView gifImageView = dialog.findViewById(R.id.gif);
-        // You can load your GIF into the ImageView using a library like Glide or directly from resources
-
-        // Set up any other views or functionality as needed
-
-        // Show the dialog
-        dialog.show();
-
-        // Set up a Handler to dismiss the dialog after 2 seconds
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (dialog.isShowing()) {
-                    dialog.dismiss();
-                }
-            }
-        }, 3000); // 2000
-    }
-
 
     private void initList() {
-//        if (managementCart.getListCart().isEmpty()) {
-//            showEmptyCart();
-//        } else {
-//            showNonEmptyCart();
-//            setupRecyclerView();
-//        }
+        // You can handle the initialization logic here if needed
     }
 
-    private void showEmptyCart() {
-//        findViewById(R.id.emptyTxt).setVisibility(View.VISIBLE);
-//        findViewById(R.id.scroll).setVisibility(View.GONE);
-    }
-
-    private void showNonEmptyCart() {
-//        findViewById(R.id.emptyTxt).setVisibility(View.GONE);
-//        findViewById(R.id.scroll).setVisibility(View.VISIBLE);
-    }
 
     private void setupRecyclerView() {
         RecyclerView cartView = findViewById(R.id.cartView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         cartView.setLayoutManager(layoutManager);
 
-        // Set up your RecyclerView adapter and pass the data from managementCart.getListCart()
-//        CartAdapter cartAdapter = new CartAdapter(managementCart.getListCart());
-        CartAdapter cartAdapter = new CartAdapter(managementCart.getListCart(), this);
-
+        cartAdapter = new CartAdapter(managementCart.getListCart(), this, this);
         cartView.setAdapter(cartAdapter);
     }
 
@@ -191,8 +151,6 @@ public class CartActivity extends AppCompatActivity {
 
                 if (selectedRadioButtonId != -1) {
                     RadioButton selectedRadioButton = dialogView.findViewById(selectedRadioButtonId);
-
-                    // Get the text from the selected radio button and set it to textView22
                     String selectedPaymentMethod = selectedRadioButton.getText().toString();
                     textView22.setText(selectedPaymentMethod);
 
@@ -208,20 +166,32 @@ public class CartActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    private void showGifDialog() {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.custom_dialog_layout_order);
+        GifImageButton gifImageView = new GifImageButton(this);
+        gifImageView.setImageResource(R.drawable.check);
+        dialog.show();
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (dialog.isShowing()) {
+                    dialog.dismiss();
+                }
+            }
+        }, 3000);
+    }
+
     private void calculatorCart() {
         double percentTax = 0.02;
         double delivery = 10;
 
-        // Calculate the item total based on the updated quantities
         double itemTotal = Math.round(managementCart.getTotalFee() * 100) / 100;
-
-        // Calculate the new tax based on the updated item total
         tax = Math.round(itemTotal * percentTax * 100) / 100;
-
-        // Calculate the new total amount
         double total = Math.round((itemTotal + tax + delivery) * 100) / 100;
 
-        // Update the TextViews with the new values
         TotalTaxTotal.setText("$" + itemTotal);
         DeliveryTax.setText("$" + delivery);
         TotalTax.setText("$" + tax);
@@ -229,11 +199,21 @@ public class CartActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onQuantityChanged(int position, int quantity) {
+        // Update the quantity in the ManagmentCart
+        managementCart.updateQuantity(position, quantity);
+
+        // Recalculate totals
+        calculatorCart();
+    }
+
+    @Override
     public void onBackPressed() {
         // Customize the behavior when the back button is pressed
         // For example, you can navigate to another activity, show a dialog, etc.
-
         // Add your custom code here
-        super.onBackPressed(); // If you want to perform the default back button behavior, remove this line
+        super.onBackPressed();
+        // If you want to perform the default back button behavior, remove this line
     }
+
 }

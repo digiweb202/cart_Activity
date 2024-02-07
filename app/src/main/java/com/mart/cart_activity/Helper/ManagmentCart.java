@@ -78,4 +78,21 @@ public class ManagmentCart {
 
         Toast.makeText(context, cartItemsStringBuilder.toString(), Toast.LENGTH_LONG).show();
     }
+    public void updateQuantity(int position, int quantity) {
+        ArrayList<PopularDomain> listItem = getListCart();
+
+        if (position >= 0 && position < listItem.size()) {
+            listItem.get(position).setNumberInChart(quantity);
+            tinyDB.putListObject("CartList", listItem);
+        }
+    }
+//    public void updateItemQuantity(int position, int quantity) {
+//        ArrayList<PopularDomain> listItem = getListCart();
+//
+//        if (position >= 0 && position < listItem.size()) {
+//            listItem.get(position).setNumberInChart(quantity);
+//            tinyDB.putListObject("CartList", listItem);
+//        }
+//    }
+
 }

@@ -23,29 +23,30 @@ import java.util.ArrayList;
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
     private final ArrayList<PopularDomain> items;
-    private Context context = null;
+    private Context context;
+    private CartAdapterListener listener;
 
-    public CartAdapter(ArrayList<PopularDomain> items, Context context) {
+    public CartAdapter(ArrayList<PopularDomain> items, Context context, CartAdapterListener listener) {
         this.items = items;
         this.context = context;
+        this.listener = listener;
     }
-
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Inflate the view using LayoutInflater
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.viewholder_cart, parent, false);
         return new ViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        // Bind data to the views inside the ViewHolder
         holder.titleTxt.setText(items.get(position).getTitle());
         holder.feeTxt.setText("$" + items.get(position).getPrice());
-//        holder.scoreTxt.setText(String.valueOf(items.get(position).getPrice()));
-//        holder.scoreTxt.setText("$"+ items.get(position).getPrice());
+        holder.scoreTxt.setText("$" + items.get(position).getPrice());
+
+
+//        item way show that value will be showing declare
         int drawableResource = holder.itemView.getResources().getIdentifier(items.get(position).getPicUrl(), "drawable", holder.itemView.getContext().getPackageName());
         Glide.with(context)
                 .load(drawableResource)
@@ -55,56 +56,68 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Handle item click
                 showDetailsToast(items.get(position));
                 Intent intent = new Intent(context, DetailActivity.class);
                 intent.putExtra("object", items.get(position));
-
                 context.startActivity(intent);
             }
         });
-        // Set click listeners for plus and minus buttons
+
         holder.plusCartBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Handle plus button click
                 int currentQuantity = Integer.parseInt(holder.numberItemTxt.getText().toString());
                 currentQuantity++;
                 holder.numberItemTxt.setText(String.valueOf(currentQuantity));
+                updateItemQuantity(position, currentQuantity);
+//                updateItem(position);
 
-                // Update the item quantity in the PopularDomain object if needed
-                // For example, you can use items.get(position).setQuantity(currentQuantity);
-                // Update the scoreTxt based on the current quantity
-                double totalPrice = currentQuantity * items.get(position).getPrice();
-                holder.scoreTxt.setText(String.valueOf(totalPrice));
+                int quantity = Integer.parseInt(holder.numberItemTxt.getText().toString());
+                if (quantity > 0) {
 
-                // Notify the adapter that the data has changed
-                notifyDataSetChanged();
+                    double totalPrice = items.get(position).getPrice() * quantity;
+                    holder.scoreTxt.setText("$" + totalPrice);
+                    holder.scoreTxt.setVisibility(View.VISIBLE);
+                } else {
+
+                    holder.scoreTxt.setVisibility(View.GONE);
+                }
+
             }
         });
 
         holder.minusCartBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Handle minus button click
                 int currentQuantity = Integer.parseInt(holder.numberItemTxt.getText().toString());
-
-                // Ensure quantity doesn't go below 0
                 if (currentQuantity > 0) {
                     currentQuantity--;
                     holder.numberItemTxt.setText(String.valueOf(currentQuantity));
+                    updateItemQuantity(position, currentQuantity);
+//                    updateItem(position);
+                    int quantity = Integer.parseInt(holder.numberItemTxt.getText().toString());
+                    if (quantity > 0) {
 
-                    // Update the item quantity in the PopularDomain object if needed
-                    // For example, you can use items.get(position).setQuantity(currentQuantity);
-                    // Update the scoreTxt based on the current quantity
-                    double totalPrice = currentQuantity * items.get(position).getPrice();
-                    holder.scoreTxt.setText(String.valueOf(totalPrice));
+                        double totalPrice = items.get(position).getPrice() * quantity;
+                        holder.scoreTxt.setText("$" + totalPrice);
+                        holder.scoreTxt.setVisibility(View.VISIBLE);
+                    } else {
 
-                    // Notify the adapter that the data has changed
-                    notifyDataSetChanged();
+                        holder.scoreTxt.setVisibility(View.GONE);
+                    }
+
                 }
             }
         });
+    }
+    // Add this method to your CartAdapter
+    public void updateItem(int position) {
+        notifyItemChanged(position);
+    }
+    private void updateItemQuantity(int position, int quantity) {
+        if (listener != null) {
+            listener.onQuantityChanged(position, quantity);
+        }
     }
 
     @Override
@@ -113,7 +126,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        // Declare views inside the ViewHolder
         private final TextView titleTxt;
         private final TextView feeTxt;
         private final TextView scoreTxt;
@@ -124,8 +136,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
         public ViewHolder(View itemView) {
             super(itemView);
-
-            // Initialize views
             titleTxt = itemView.findViewById(R.id.titleTxt);
             feeTxt = itemView.findViewById(R.id.feeEachItem);
             scoreTxt = itemView.findViewById(R.id.totalEachItem);
@@ -137,7 +147,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
     }
 
     private void showDetailsToast(PopularDomain item) {
-        // Display a toast with item details
         Toast.makeText(context, "Details: " + item.getTitle() + ", Price: $" + item.getPrice(), Toast.LENGTH_SHORT).show();
+    }
+
+    // Interface to communicate quantity changes to the CartActivity
+    public interface CartAdapterListener {
+        void onQuantityChanged(int position, int quantity);
     }
 }
