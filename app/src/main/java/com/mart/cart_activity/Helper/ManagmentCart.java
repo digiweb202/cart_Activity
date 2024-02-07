@@ -34,6 +34,7 @@ public class ManagmentCart {
             listpop.add(item);
         }
         tinyDB.putListObject("CartList",listpop);
+        displayCartItems();
         Toast.makeText(context, "Added to your Cart", Toast.LENGTH_SHORT).show();
     }
 
@@ -62,5 +63,19 @@ public class ManagmentCart {
         listItem.get(position).setNumberInChart(listItem.get(position).getNumberInChart()+1);
         tinyDB.putListObject("CartList",listItem);
         changeNumberItemsListener.change();
+    }
+
+    public void displayCartItems() {
+        ArrayList<PopularDomain> listItem = getListCart();
+
+        StringBuilder cartItemsStringBuilder = new StringBuilder("Cart Items:\n");
+
+        for (int i = 0; i < listItem.size(); i++) {
+            PopularDomain item = listItem.get(i);
+            cartItemsStringBuilder.append(String.format("%d. %s - Quantity: %d\n",
+                    i + 1, item.getTitle(), item.getNumberInChart()));
+        }
+
+        Toast.makeText(context, cartItemsStringBuilder.toString(), Toast.LENGTH_LONG).show();
     }
 }

@@ -25,10 +25,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
     private final ArrayList<PopularDomain> items;
     private Context context = null;
 
-    public CartAdapter(ArrayList<PopularDomain> items) {
+    public CartAdapter(ArrayList<PopularDomain> items, Context context) {
         this.items = items;
         this.context = context;
     }
+
 
     @NonNull
     @Override
@@ -43,8 +44,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         // Bind data to the views inside the ViewHolder
         holder.titleTxt.setText(items.get(position).getTitle());
         holder.feeTxt.setText("$" + items.get(position).getPrice());
-        holder.scoreTxt.setText(String.valueOf(items.get(position).getScore()));
-
+//        holder.scoreTxt.setText(String.valueOf(items.get(position).getPrice()));
+//        holder.scoreTxt.setText("$"+ items.get(position).getPrice());
         int drawableResource = holder.itemView.getResources().getIdentifier(items.get(position).getPicUrl(), "drawable", holder.itemView.getContext().getPackageName());
         Glide.with(context)
                 .load(drawableResource)
@@ -62,6 +63,48 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
                 context.startActivity(intent);
             }
         });
+        // Set click listeners for plus and minus buttons
+        holder.plusCartBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Handle plus button click
+                int currentQuantity = Integer.parseInt(holder.numberItemTxt.getText().toString());
+                currentQuantity++;
+                holder.numberItemTxt.setText(String.valueOf(currentQuantity));
+
+                // Update the item quantity in the PopularDomain object if needed
+                // For example, you can use items.get(position).setQuantity(currentQuantity);
+                // Update the scoreTxt based on the current quantity
+                double totalPrice = currentQuantity * items.get(position).getPrice();
+                holder.scoreTxt.setText(String.valueOf(totalPrice));
+
+                // Notify the adapter that the data has changed
+                notifyDataSetChanged();
+            }
+        });
+
+        holder.minusCartBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Handle minus button click
+                int currentQuantity = Integer.parseInt(holder.numberItemTxt.getText().toString());
+
+                // Ensure quantity doesn't go below 0
+                if (currentQuantity > 0) {
+                    currentQuantity--;
+                    holder.numberItemTxt.setText(String.valueOf(currentQuantity));
+
+                    // Update the item quantity in the PopularDomain object if needed
+                    // For example, you can use items.get(position).setQuantity(currentQuantity);
+                    // Update the scoreTxt based on the current quantity
+                    double totalPrice = currentQuantity * items.get(position).getPrice();
+                    holder.scoreTxt.setText(String.valueOf(totalPrice));
+
+                    // Notify the adapter that the data has changed
+                    notifyDataSetChanged();
+                }
+            }
+        });
     }
 
     @Override
@@ -75,6 +118,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         private final TextView feeTxt;
         private final TextView scoreTxt;
         private final ImageView pic;
+        private final TextView plusCartBtn;
+        private final TextView minusCartBtn;
+        private final TextView numberItemTxt;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -84,6 +130,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             feeTxt = itemView.findViewById(R.id.feeEachItem);
             scoreTxt = itemView.findViewById(R.id.totalEachItem);
             pic = itemView.findViewById(R.id.pic);
+            plusCartBtn = itemView.findViewById(R.id.plusCartBtn);
+            minusCartBtn = itemView.findViewById(R.id.minusCartBtn);
+            numberItemTxt = itemView.findViewById(R.id.numberItemTxt);
         }
     }
 

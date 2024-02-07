@@ -45,7 +45,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.mart.cart_Activity.R;
+import com.mart.cart_activity.Api.ApiService;
+import com.mart.cart_activity.ApiModel.UserApiModel;
+import com.mart.cart_activity.ApiResponse.LoginResponse;
 import com.mart.cart_activity.Database.AppDatabase;
+import com.mart.cart_activity.DatabaseApi.RetrofitClient;
 import com.mart.cart_activity.Databaseinitializers.DatabaseInitializers;
 import com.mart.cart_activity.Entities.UserEntities;
 import com.mart.cart_activity.Entities.UserSignupEntities;
@@ -57,6 +61,9 @@ import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
 
 public class LoginActivity extends AppCompatActivity {
     private Button login_btn;
@@ -479,4 +486,42 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
     }
+//        Login Retrofit Api Code
+//    private void loginUser() {
+//        String email = txtInput_user.getText().toString();
+//        String password = txt_pass.getText().toString();
+//
+//        // Use the Retrofit client to create an instance
+//        ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
+//
+//        Call<LoginResponse> call = apiService.loginUser(email, password);
+//        call.enqueue(new Callback<LoginResponse>() {
+//            @Override
+//            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+//                if (response.isSuccessful()) {
+//                    LoginResponse loginResponse = response.body();
+//                    if (loginResponse != null && loginResponse.getStatus().equals("200")) {
+//                        // Login successful, handle user data
+//                        UserApiModel user = loginResponse.getUser();
+//                        // TODO: Handle the logged-in user
+//                    } else {
+//                        // Login failed, handle the error message
+//                        String errorMessage = loginResponse != null ? loginResponse.getMessage() : "Unknown error";
+//                        Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+//                    }
+//                } else {
+//                    // Request failed, handle the error
+//                    Toast.makeText(LoginActivity.this, "Request failed", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<LoginResponse> call, Throwable t) {
+//                // Network error or other failure
+//                Toast.makeText(LoginActivity.this, "Network error", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//
+//
+//    }
 }

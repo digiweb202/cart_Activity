@@ -7,15 +7,23 @@ import androidx.lifecycle.Observer;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mart.cart_Activity.R;
+import com.mart.cart_activity.Api.ApiService;
+import com.mart.cart_activity.DatabaseApi.RetrofitClient;
 import com.mart.cart_activity.Entities.UserSignupEntities;
 import com.mart.cart_activity.Repository.UserSignupRepository;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class SignupActivity extends AppCompatActivity {
     private Button signup_btn;
@@ -42,7 +50,8 @@ public class SignupActivity extends AppCompatActivity {
         Etd_confirm_pass = findViewById(R.id.etd_confirm_pass);
 
         userSignupRepository = new UserSignupRepository(getApplication());
-
+        // Initialize Retrofit interface
+        ApiService apiInterface = RetrofitClient.getClient().create(ApiService.class);
 
 
 
@@ -109,6 +118,32 @@ public class SignupActivity extends AppCompatActivity {
                         startActivity(intent);
                     }
                 });
+//                Signup Retrofit Api code
+//                // Make API call using Retrofit
+//                Call<String> call = apiInterface.signup(username, Name, Email, Pass);
+//                call.enqueue(new Callback<String>() {
+//                    @Override
+//                    public void onResponse(Call<String> call, Response<String> response) {
+//                        if (response.isSuccessful()) {
+//                            // Handle successful response
+//                            String result = response.body();
+//                            Toast.makeText(MainActivity.this, "Response: " + result, Toast.LENGTH_SHORT).show();
+//                            Log.d("API Response", result);
+//                        } else {
+//                            // Handle error response
+//                            Toast.makeText(MainActivity.this, "Error: " + response.message(), Toast.LENGTH_SHORT).show();
+//                            Log.e("API Error", "Error: " + response.message());
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Call<String> call, Throwable t) {
+//                        // Handle failure
+//                        Toast.makeText(MainActivity.this, "Failure: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+//                        Log.e("API Failure", "Error: " + t.getMessage());
+//                    }
+//                });
+
             }
         });
 

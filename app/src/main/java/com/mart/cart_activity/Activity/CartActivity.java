@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,7 +33,15 @@ public class CartActivity extends AppCompatActivity {
     private ManagmentCart managementCart;
     private TextView textView22;
     private  ImageView openDialogButton;
+    private TextView Payment;
     private TextView textview22;
+    private TextView TotalTaxTotal;
+
+    private TextView DeliveryTax;
+
+    private TextView TotalTax;
+    private TextView TotalAmount;
+    double tax;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +50,13 @@ public class CartActivity extends AppCompatActivity {
         ProfileEdit = findViewById(R.id.editProfile);
         Method_Payment = findViewById(R.id.payment_method);
         Backbtn = findViewById(R.id.mycartBtn);
-        textView22 = findViewById(R.id.textView22);
+        textView22 = findViewById(R.id.payment);
+        Payment = findViewById(R.id.payment);
+        TotalTaxTotal = findViewById(R.id.totalFeeTxt);
+        DeliveryTax = findViewById(R.id.deliveryTxt);
+        TotalTax = findViewById(R.id.taxTxt);
+        TotalAmount= findViewById(R.id.totalTxt);
+
 
 
         // Assuming you have a button to open the payment method dialog
@@ -53,6 +68,13 @@ public class CartActivity extends AppCompatActivity {
                 // Show the payment method dialog
                 showPaymentMethodDialog();
                 Log.e("CartActivity_Payment_Method","Button is working//:");
+            }
+        });
+        Payment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPaymentMethodDialog();
+                Toast.makeText(CartActivity.this,"Payment Option",Toast.LENGTH_SHORT).show();
             }
         });
         Method_Payment.setOnClickListener(new View.OnClickListener() {
@@ -84,7 +106,13 @@ public class CartActivity extends AppCompatActivity {
         });
         setVariables();
         initList();
+        setupRecyclerView();
+        calculatorCart();
     }
+    private void setVariables() {
+        managementCart = new ManagmentCart(this); // Assuming ManagmentCart constructor takes a Context parameter
+    }
+
     @SuppressLint("ResourceType")
     private void showGifDialog() {
         // Create a custom dialog
@@ -112,9 +140,7 @@ public class CartActivity extends AppCompatActivity {
             }
         }, 3000); // 2000
     }
-    private void setVariables() {
-//        managementCart = new ManagmentCart(); // Initialize your ManagementCart class here
-    }
+
 
     private void initList() {
 //        if (managementCart.getListCart().isEmpty()) {
@@ -141,7 +167,9 @@ public class CartActivity extends AppCompatActivity {
         cartView.setLayoutManager(layoutManager);
 
         // Set up your RecyclerView adapter and pass the data from managementCart.getListCart()
-        CartAdapter cartAdapter = new CartAdapter(managementCart.getListCart());
+//        CartAdapter cartAdapter = new CartAdapter(managementCart.getListCart());
+        CartAdapter cartAdapter = new CartAdapter(managementCart.getListCart(), this);
+
         cartView.setAdapter(cartAdapter);
     }
 
@@ -179,6 +207,27 @@ public class CartActivity extends AppCompatActivity {
 
         dialog.show();
     }
+
+    private void calculatorCart() {
+        double percentTax = 0.02;
+        double delivery = 10;
+
+        // Calculate the item total based on the updated quantities
+        double itemTotal = Math.round(managementCart.getTotalFee() * 100) / 100;
+
+        // Calculate the new tax based on the updated item total
+        tax = Math.round(itemTotal * percentTax * 100) / 100;
+
+        // Calculate the new total amount
+        double total = Math.round((itemTotal + tax + delivery) * 100) / 100;
+
+        // Update the TextViews with the new values
+        TotalTaxTotal.setText("$" + itemTotal);
+        DeliveryTax.setText("$" + delivery);
+        TotalTax.setText("$" + tax);
+        TotalAmount.setText("$" + total);
+    }
+
     @Override
     public void onBackPressed() {
         // Customize the behavior when the back button is pressed

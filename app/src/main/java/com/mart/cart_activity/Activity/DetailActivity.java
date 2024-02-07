@@ -14,6 +14,10 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.mart.cart_Activity.R;
+import com.mart.cart_activity.CartManagment.ManagmentCartList;
+import com.mart.cart_activity.Dao.ProductDao;
+import com.mart.cart_activity.Database.AppDatabase;
+import com.mart.cart_activity.Entities.ProductListEntities;
 import com.mart.cart_activity.Helper.ManagmentCart;
 import com.mart.cart_activity.domain.PopularDomain;
 
@@ -112,8 +116,39 @@ public class DetailActivity extends AppCompatActivity {
                     // Handle button click
                     // You may want to add your logic here
                     // For example, updating the object or performing some action
-                    object.setNumberInChart(numberOrder);
-                    managmentCart.insertFood(object);
+
+                    try {
+                        object.setNumberInChart(numberOrder);
+                        managmentCart.insertFood(object);
+                        // Assuming you have an instance of AppDatabase
+                        AppDatabase appDatabase = AppDatabase.getInstance(getApplicationContext());
+
+// Get the ProductDao from AppDatabase
+                        ProductDao productDao = appDatabase.productDao();
+
+// Now, you can use productDao in ManagmentCartList
+                        ManagmentCartList managmentCartList = new ManagmentCartList(productDao);
+
+// Rest of your code
+                        ProductListEntities product = new ProductListEntities(object.getPicUrl(), object.getTitle(), object.getPrice());
+
+                        long productId = managmentCartList.insertProduct(product);
+
+                        if (productId != -1) {
+                            // Product inserted successfully
+                            Toast.makeText(DetailActivity.this, "Product added to cart", Toast.LENGTH_SHORT).show();
+                        } else {
+                            // Error inserting product
+                            Toast.makeText(DetailActivity.this, "Error adding product to cart", Toast.LENGTH_SHORT).show();
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(DetailActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+
+
+
                 }
             });
 
