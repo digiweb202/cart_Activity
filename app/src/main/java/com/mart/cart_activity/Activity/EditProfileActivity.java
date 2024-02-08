@@ -14,8 +14,15 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.mart.cart_Activity.R;
+import com.mart.cart_activity.Api.ApiClient;
+import com.mart.cart_activity.Api.ApiService;
+import com.mart.cart_activity.ApiResponse.UserUpdateResponse;
 import com.mart.cart_activity.Entities.UserSignupEntities;
 import com.mart.cart_activity.Model.UserViewModel;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class EditProfileActivity extends AppCompatActivity {
 
@@ -147,5 +154,36 @@ public class EditProfileActivity extends AppCompatActivity {
             }
         });
     }
+//    user update data api retrofit code
 
+//    private void updateUserDetails() {
+//        // ... (existing code)
+//
+//        int userId = 1; // You need to replace this with the actual user ID
+//
+//        // Use the updated Retrofit service to make the API call
+//        Call<UserUpdateResponse> call = ApiClient.getClient().create(ApiService.class)
+//                .updateUser(updatedEmail, updatedUsername, updatedPassword, updatedFullname, updatedNumber, updatedAddress, updatedNickname);
+//
+//        call.enqueue(new Callback<UserUpdateResponse>() {
+//            @Override
+//            public void onResponse(Call<UserUpdateResponse> call, Response<UserUpdateResponse> response) {
+//                if (response.isSuccessful()) {
+//                    // Handle successful response
+//                    // response.body().getStatus() and response.body().getMessage() contain the status and message from the server
+//
+//                    // Navigate to another activity
+//                    Intent intent = new Intent(EditProfileActivity.this, ProfileActivity.class);
+//                    startActivity(intent);
+//                } else {
+//                    // Handle error
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<UserUpdateResponse> call, Throwable t) {
+//                // Handle failure
+//            }
+//        });
+//    }
 }

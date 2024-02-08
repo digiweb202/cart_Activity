@@ -4,6 +4,7 @@ import android.content.Context;
 import android.widget.Toast;
 
 
+import com.mart.cart_activity.Adapter.CartAdapter;
 import com.mart.cart_activity.domain.PopularDomain;
 
 import java.util.ArrayList;
@@ -11,10 +12,13 @@ import java.util.ArrayList;
 public class ManagmentCart {
     private Context context;
     private TinyDB tinyDB;
+    private CartAdapter cartAdapter;
+
 
     public ManagmentCart(Context context) {
         this.context = context;
         this.tinyDB=new TinyDB(context);
+        this.cartAdapter = cartAdapter;
     }
 
     public void insertFood(PopularDomain item) {
@@ -35,6 +39,7 @@ public class ManagmentCart {
         }
         tinyDB.putListObject("CartList",listpop);
         displayCartItems();
+        cartAdapter.notifyDataSetChanged();
         Toast.makeText(context, "Added to your Cart", Toast.LENGTH_SHORT).show();
     }
 
@@ -58,11 +63,14 @@ public class ManagmentCart {
         }
         tinyDB.putListObject("CartList",listItem);
         changeNumberItemsListener.change();
+
+        cartAdapter.notifyDataSetChanged();
     }
     public  void plusNumberItem(ArrayList<PopularDomain> listItem,int position,ChangeNumberItemsListener changeNumberItemsListener){
         listItem.get(position).setNumberInChart(listItem.get(position).getNumberInChart()+1);
         tinyDB.putListObject("CartList",listItem);
         changeNumberItemsListener.change();
+        cartAdapter.notifyDataSetChanged();
     }
 
     public void displayCartItems() {
@@ -94,5 +102,17 @@ public class ManagmentCart {
 //            tinyDB.putListObject("CartList", listItem);
 //        }
 //    }
+// Implement the CartAdapterListener interface
+public void onQuantityChanged(int position, int quantity) {
+    // Update the quantity of the product in your product domain
+    // Use the position to identify the product in your list
+    // Update the quantity using the provided quantity parameter
+    // Example:
+    ArrayList<PopularDomain> listItem = getListCart();
+    if (position >= 0 && position < listItem.size()) {
+        listItem.get(position).setNumberInChart(quantity);
+        tinyDB.putListObject("CartList", listItem);
+    }
+}
 
 }

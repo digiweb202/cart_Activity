@@ -43,7 +43,12 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.titleTxt.setText(items.get(position).getTitle());
         holder.feeTxt.setText("$" + items.get(position).getPrice());
-        holder.scoreTxt.setText("$" + items.get(position).getPrice());
+//        holder.scoreTxt.setText("$" + items.get(position).getPrice());
+        PopularDomain currentItem = items.get(position);
+        currentItem.setNumberInChart(currentItem.getNumberInChart());
+        holder.numberItemTxt.setText(String.valueOf(currentItem.getNumberInChart()));
+        double totalPrice = items.get(position).getPrice() * Integer.parseInt(String.valueOf(currentItem.getNumberInChart()));
+        holder.scoreTxt.setText("$" + totalPrice);
 
 
 //        item way show that value will be showing declare
@@ -66,22 +71,25 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         holder.plusCartBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int currentQuantity = Integer.parseInt(holder.numberItemTxt.getText().toString());
+                int currentQuantity = Integer.parseInt(String.valueOf(currentItem.getNumberInChart()));
                 currentQuantity++;
-                holder.numberItemTxt.setText(String.valueOf(currentQuantity));
+
                 updateItemQuantity(position, currentQuantity);
 //                updateItem(position);
 
                 int quantity = Integer.parseInt(holder.numberItemTxt.getText().toString());
                 if (quantity > 0) {
 
-                    double totalPrice = items.get(position).getPrice() * quantity;
+                    double totalPrice = items.get(position).getPrice() * Integer.parseInt(String.valueOf(currentQuantity));
                     holder.scoreTxt.setText("$" + totalPrice);
                     holder.scoreTxt.setVisibility(View.VISIBLE);
+                    holder.numberItemTxt.setText(String.valueOf(currentQuantity));
+                    currentItem.setNumberInChart(Integer.parseInt(String.valueOf(currentQuantity)));
                 } else {
 
                     holder.scoreTxt.setVisibility(View.GONE);
                 }
+//                    holder.numberItemTxt.setText(String.valueOf(currentItem.getNumberInChart()));
 
             }
         });
@@ -90,25 +98,39 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             @Override
             public void onClick(View v) {
                 int currentQuantity = Integer.parseInt(holder.numberItemTxt.getText().toString());
-                if (currentQuantity > 0) {
+
+                if (currentQuantity > 1) {
                     currentQuantity--;
+
+                    // Update the UI with the new quantity
                     holder.numberItemTxt.setText(String.valueOf(currentQuantity));
+
+                    // Update the data (assuming this method is defined elsewhere)
                     updateItemQuantity(position, currentQuantity);
-//                    updateItem(position);
-                    int quantity = Integer.parseInt(holder.numberItemTxt.getText().toString());
-                    if (quantity > 0) {
 
-                        double totalPrice = items.get(position).getPrice() * quantity;
-                        holder.scoreTxt.setText("$" + totalPrice);
-                        holder.scoreTxt.setVisibility(View.VISIBLE);
-                    } else {
+                    // Update the total price and visibility if the quantity is still greater than 0
+                    double totalPrice = items.get(position).getPrice() * currentQuantity;
+                    holder.scoreTxt.setText("$" + totalPrice);
+                    holder.scoreTxt.setVisibility(View.VISIBLE);
 
-                        holder.scoreTxt.setVisibility(View.GONE);
-                    }
+                    // Update the data with the new quantity
+                    currentItem.setNumberInChart(currentQuantity);
+                } else {
+                    // If the quantity is 1, you can choose to handle it differently,
+                    // such as showing/hiding views, updating data, etc.
+                    // For now, let's just update the UI with the new quantity.
+                    holder.numberItemTxt.setText("1");
+
+                    // If you want to update the data for quantity 1, use the following line:
+                    // updateItemQuantity(position, 1);
+                    double totalPrice = items.get(position).getPrice() * currentQuantity;
+                    holder.scoreTxt.setText("$" + totalPrice);
+                    holder.scoreTxt.setVisibility(View.VISIBLE);
 
                 }
             }
         });
+
     }
     // Add this method to your CartAdapter
     public void updateItem(int position) {

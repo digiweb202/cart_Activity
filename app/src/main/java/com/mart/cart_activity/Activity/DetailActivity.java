@@ -118,7 +118,9 @@ public class DetailActivity extends AppCompatActivity {
                     // For example, updating the object or performing some action
 
                     try {
-                        object.setNumberInChart(numberOrder);
+//                        object.setNumberInChart(numberOrder);
+                        object.setNumberInChart(object.getNumberInChart() + 1 > object.getNumberInChart() ? object.getNumberInChart() + 1 : object.getNumberInChart());
+
                         managmentCart.insertFood(object);
                         // Assuming you have an instance of AppDatabase
                         AppDatabase appDatabase = AppDatabase.getInstance(getApplicationContext());
