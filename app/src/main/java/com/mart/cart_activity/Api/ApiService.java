@@ -1,7 +1,10 @@
 package com.mart.cart_activity.Api;
 import com.mart.cart_activity.Activity.OtpActivity;
+import com.mart.cart_activity.ApiResponse.CategoriesResponse;
 import com.mart.cart_activity.ApiResponse.LoginResponse;
 import com.mart.cart_activity.ApiResponse.UserUpdateResponse;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -41,4 +44,7 @@ public interface ApiService {
             @Field("address") String address,
             @Field("nickname") String nickname
     );
+
+    @GET("api_all_browse_categories.php") // Replace with the actual path to your PHP script
+    Call<List<CategoriesResponse>> getCategories();
 }

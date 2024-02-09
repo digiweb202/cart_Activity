@@ -11,6 +11,16 @@ import android.widget.TextView;
 
 import com.google.android.material.card.MaterialCardView;
 import com.mart.cart_Activity.R;
+import com.mart.cart_activity.Api.ApiService;
+import com.mart.cart_activity.ApiResponse.CategoriesResponse;
+import com.mart.cart_activity.DatabaseApi.RetrofitClient;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class ProductCategoriesActivity extends AppCompatActivity {
     private ImageView notificationBtn;
@@ -27,7 +37,9 @@ public class ProductCategoriesActivity extends AppCompatActivity {
             }
         });
         GridLayout cardGrid = findViewById(R.id.cardGrid);
+//        API function calling
 
+//        makeApiRequest();
         for (int i = 0; i < cardGrid.getChildCount(); i++) {
             View cardView = cardGrid.getChildAt(i);
 
@@ -50,4 +62,30 @@ public class ProductCategoriesActivity extends AppCompatActivity {
             }
         }
     }
+    // Function to make the API request
+    //Categories Details fetch api code
+    private void makeApiRequest() {
+        // Create an instance of the ApiService using the RetrofitClient
+        ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
+
+        // Make the API call
+        Call<List<CategoriesResponse>> call = apiService.getCategories();
+        call.enqueue(new Callback<List<CategoriesResponse>>() {
+            @Override
+            public void onResponse(Call<List<CategoriesResponse>> call, Response<List<CategoriesResponse>> response) {
+                if (response.isSuccessful()) {
+                    List<CategoriesResponse> categories = response.body();
+                    // Handle the retrieved data as needed
+                } else {
+                    // Handle unsuccessful response
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<CategoriesResponse>> call, Throwable t) {
+                // Handle failure
+            }
+        });
+    }
+
 }

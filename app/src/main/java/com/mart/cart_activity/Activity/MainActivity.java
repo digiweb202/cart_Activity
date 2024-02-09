@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -30,6 +31,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mart.cart_Activity.R;
 import com.mart.cart_activity.Adapter.PopularAdapter;
+import com.mart.cart_activity.Adapter.SuggestionsAdapter;
 import com.mart.cart_activity.Entities.UserEntities;
 import com.mart.cart_activity.Entities.UserSignupEntities;
 import com.mart.cart_activity.Model.UserViewModel;
@@ -38,6 +40,7 @@ import com.mart.cart_activity.domain.PopularDomain;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import android.widget.TextView;
@@ -208,7 +211,16 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        // Sample suggestions
+        String[] suggestions = {"Android", "Android 1","android 3","alksdfjsdaf","Java", "Kotlin", "XML", "Studio"};
 
+        // Adapter
+        SuggestionsAdapter adapter = new SuggestionsAdapter(this,
+                android.R.layout.simple_dropdown_item_1line, Arrays.asList(suggestions));
+
+        // AutoCompleteTextView
+        AutoCompleteTextView autoCompleteTextView = findViewById(R.id.autoCompleteTextView);
+        autoCompleteTextView.setAdapter(adapter);
         initRecyclerView();
     }
 
