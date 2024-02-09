@@ -10,9 +10,15 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+//
+//        maven { url
+//            "https://jitpack.io"
+//        }
+//        maven { url
+//            "https://maven.google.com"
+//        }
     }
 }
 
 rootProject.name = "cart_Activity"
 include(":app")
- 

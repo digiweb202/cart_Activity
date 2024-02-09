@@ -316,6 +316,20 @@
                 android:text="Order Now"
                 android:textSize="18sp"/>
 
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/pay"
+                android:layout_marginTop="32dp"
+                android:background="@drawable/btn_background"
+                android:textColor="@color/white"
+                android:layout_width="match_parent"
+
+                android:layout_height="wrap_content"
+                android:text="Pay"
+
+                android:visibility="gone"
+                android:textSize="18sp"/>
+
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

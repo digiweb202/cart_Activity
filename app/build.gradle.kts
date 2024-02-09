@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
 }
 
+
 android {
     compileSdk = 34
 
@@ -97,7 +98,8 @@ dependencies {
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
 
-
+//    rezorepay integration related dependency
+    implementation ("com.razorpay:checkout:1.6.33")
 
 
 

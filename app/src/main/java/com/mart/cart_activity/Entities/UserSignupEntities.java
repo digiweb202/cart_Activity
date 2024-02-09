@@ -19,6 +19,9 @@ public class UserSignupEntities {
     @ColumnInfo(name = "nikname")
     private String nikname;
 
+    @ColumnInfo(name = "pincode")
+    private String pincode;
+
     public String getFullname() {
         return fullname;
     }
@@ -51,16 +54,6 @@ public class UserSignupEntities {
         this.address = address;
     }
 
-    public UserSignupEntities(int id, String username, String email, String password, String fullname, String nikname, String number, String address) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.fullname = fullname;
-        this.nikname = nikname;
-        this.number = number;
-        this.address = address;
-    }
 
     @ColumnInfo(name = "number")
     private String number;
@@ -110,6 +103,14 @@ public class UserSignupEntities {
         this.email = email;
     }
 
+    public String getPincode() {
+        return pincode;
+    }
+
+    public void setPincode(String pincode) {
+        this.pincode = pincode;
+    }
+
     public String getPassword() {
         return password;
     }
@@ -117,4 +118,17 @@ public class UserSignupEntities {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public UserSignupEntities(int id, String username, String email, String password, String fullname, String nikname, String number, String address,String pincode) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.fullname = fullname;
+        this.nikname = nikname;
+        this.number = number;
+        this.address = address;
+        this.pincode = pincode;
+    }
+
 }

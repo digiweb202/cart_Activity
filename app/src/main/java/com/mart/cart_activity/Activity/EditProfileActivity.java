@@ -34,6 +34,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private EditText number;
     private EditText password;
     private EditText address;
+    private EditText pincode;
     private Button submit;
     private UserViewModel userViewModel;
     @SuppressLint("MissingInflatedId")
@@ -49,6 +50,7 @@ public class EditProfileActivity extends AppCompatActivity {
         number = findViewById(R.id.etNumber);
         password = findViewById(R.id.etPassword);
         address = findViewById(R.id.etAddress);
+        pincode = findViewById(R.id.etPincode);
         submit = findViewById(R.id.btn_submit);
 
          userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
@@ -65,6 +67,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
                     email.setText(user.getEmail());
                     address.setText(user.getAddress());
+                    pincode.setText(user.getPincode());
                     number.setText(user.getNumber());
                     password.setText(user.getPassword());
 
@@ -91,6 +94,7 @@ public class EditProfileActivity extends AppCompatActivity {
         String updatedNickname = nickname.getText().toString().trim();
         String updatedNumber = number.getText().toString().trim();
         String updatedAddress = address.getText().toString().trim();
+        String updatePincode = pincode.getText().toString().trim();
 
         // Validate all fields before updating
         if (updatedUsername.isEmpty()) {
@@ -127,6 +131,10 @@ public class EditProfileActivity extends AppCompatActivity {
             address.setError("Address is required");
             return;
         }
+        if (updatePincode.isEmpty()) {
+            address.setError("Pincode is required");
+            return;
+        }
 
         int userId = 1; // You need to replace this with the actual user ID
 
@@ -143,6 +151,7 @@ public class EditProfileActivity extends AppCompatActivity {
                     existingUser.setNikname(updatedNickname);
                     existingUser.setNumber(updatedNumber);
                     existingUser.setAddress(updatedAddress);
+                    existingUser.setPincode(updatePincode);
 
                     // Save the updated user details
                     userViewModel.updateUser(existingUser);

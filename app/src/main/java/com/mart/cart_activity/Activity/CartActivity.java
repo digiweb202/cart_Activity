@@ -1,10 +1,12 @@
 package com.mart.cart_activity.Activity;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -22,7 +24,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.mart.cart_activity.Adapter.CartAdapter;
 import com.mart.cart_activity.Helper.ManagmentCart;
 import com.mart.cart_Activity.R;
+import com.razorpay.Checkout;
 
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import pl.droidsonroids.gif.GifImageButton;
@@ -48,7 +52,9 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
     private double tax;
     private CartAdapter cartAdapter;
     private TextView TextViewbutton;
-
+    private Button orderButton;
+    private Button payment;
+    double amTotal;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +69,9 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
         DeliveryTax = findViewById(R.id.deliveryTxt);
         TotalTax = findViewById(R.id.taxTxt);
         TotalAmount = findViewById(R.id.totalTxt);
+        orderButton = findViewById(R.id.button2);
+        payment = findViewById(R.id.pay);
+
 //        TextViewbutton = findViewById(R.id.mycart);
 
         openDialogButton = findViewById(R.id.payment_method);
@@ -111,17 +120,23 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
             }
         });
 
-        Button orderButton = findViewById(R.id.button2);
+
         orderButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
 //                managementCart.removeItem(2);
                 managementCart.removeAllItems();
+                makepayment();
                 showGifDialog();
             }
         });
+        payment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+            }
+        });
         setVariables();
         initList();
         setupRecyclerView();
@@ -210,6 +225,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
         DeliveryTax.setText("$" + delivery);
         TotalTax.setText("$" + tax);
         TotalAmount.setText("$" + total);
+        amTotal = total;
     }
 
     @Override
@@ -230,4 +246,44 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
         // If you want to perform the default back button behavior, remove this line
     }
 
+    private void makepayment()
+    {
+
+        Checkout checkout = new Checkout();
+        checkout.setKeyID("rzp_live_dntcr3OmvhF2vG");
+
+        checkout.setImage(R.drawable.logo);
+        final Activity activity = this;
+
+        try {
+            JSONObject options = new JSONObject();
+
+            options.put("name", "Test User");
+            options.put("description", "Reference No. #123456");
+            options.put("image", "https://s3.amazonaws.com/rzp-mobile/images/rzp.png");
+            // options.put("order_id", "order_DBJOWzybf0sJbb");//from response of step 3.
+            options.put("theme.color", "#3399cc");
+            options.put("currency", "INR");
+            options.put("amount", amTotal * 100);//300 X 100
+            options.put("prefill.email", "test@gmail.com");
+            options.put("prefill.contact","000000000");
+            checkout.open(activity, options);
+        } catch(Exception e) {
+            Log.e("TAG", "Error in starting Razorpay Checkout", e);
+        }
+    }
+
+
+    public void onPaymentSuccess(String s)
+    {
+        Toast.makeText(CartActivity.this,"Successful payment ID:" +s,Toast.LENGTH_SHORT).show();
+//        paytext.setText("Successful payment ID :"+s);
+    }
+
+
+    public void onPaymentError(int i, String s) {
+        Toast.makeText(CartActivity.this,"Failed and cause is:"+s,Toast.LENGTH_SHORT).show();
+
+//        paytext.setText("Failed and cause is :"+s);
+    }
 }
