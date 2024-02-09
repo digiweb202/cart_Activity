@@ -23,6 +23,8 @@ import com.mart.cart_activity.Adapter.CartAdapter;
 import com.mart.cart_activity.Helper.ManagmentCart;
 import com.mart.cart_Activity.R;
 
+import org.w3c.dom.Text;
+
 import pl.droidsonroids.gif.GifImageButton;
 
 import java.util.ArrayList;
@@ -45,6 +47,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
     private TextView TotalAmount;
     private double tax;
     private CartAdapter cartAdapter;
+    private TextView TextViewbutton;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -60,9 +63,16 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
         DeliveryTax = findViewById(R.id.deliveryTxt);
         TotalTax = findViewById(R.id.taxTxt);
         TotalAmount = findViewById(R.id.totalTxt);
+//        TextViewbutton = findViewById(R.id.mycart);
 
         openDialogButton = findViewById(R.id.payment_method);
 
+//        TextViewbutton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                managementCart.removeItem(2);
+//            }
+//        });
         openDialogButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -105,6 +115,9 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
         orderButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+//                managementCart.removeItem(2);
+                managementCart.removeAllItems();
                 showGifDialog();
             }
         });
@@ -129,7 +142,8 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         cartView.setLayoutManager(layoutManager);
 
-        cartAdapter = new CartAdapter(managementCart.getListCart(), this, this);
+        cartAdapter = new CartAdapter(managementCart.getListCart(), this, managementCart, this);
+
         cartView.setAdapter(cartAdapter);
     }
 

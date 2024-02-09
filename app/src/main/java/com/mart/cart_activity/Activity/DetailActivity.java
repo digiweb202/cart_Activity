@@ -44,6 +44,7 @@ public class DetailActivity extends AppCompatActivity {
         gotocart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                managmentCart.displayCartItems();
                 Intent intent = new Intent(DetailActivity.this,CartActivity.class);
                 startActivity(intent);
             }
@@ -119,8 +120,8 @@ public class DetailActivity extends AppCompatActivity {
 
                     try {
 //                        object.setNumberInChart(numberOrder);
-                        object.setNumberInChart(object.getNumberInChart() + 1 > object.getNumberInChart() ? object.getNumberInChart() + 1 : object.getNumberInChart());
-
+//                        object.setNumberInChart(object.getNumberInChart() + 1 > object.getNumberInChart() ? object.getNumberInChart() + 1 : object.getNumberInChart());
+                            object.setNumberInChart(1);
                         managmentCart.insertFood(object);
                         // Assuming you have an instance of AppDatabase
                         AppDatabase appDatabase = AppDatabase.getInstance(getApplicationContext());

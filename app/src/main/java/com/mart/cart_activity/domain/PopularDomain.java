@@ -3,13 +3,24 @@ package com.mart.cart_activity.domain;
 import java.io.Serializable;
 
 public class PopularDomain implements Serializable {
+    private static String id;  // Change the type to String
     private String title;
     private String picUrl;
     private int review;
     private double score;
     private int numberInChart;
-    private double price;  // Fixed the variable name from pirce to price
+    private double price;
     private String description;
+
+
+    public static String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -73,7 +84,5 @@ public class PopularDomain implements Serializable {
         this.score = score;
         this.price = price;
         this.description = description;
-
     }
-
 }

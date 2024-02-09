@@ -8,6 +8,7 @@ import com.mart.cart_activity.Adapter.CartAdapter;
 import com.mart.cart_activity.domain.PopularDomain;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ManagmentCart {
     private Context context;
@@ -114,5 +115,83 @@ public void onQuantityChanged(int position, int quantity) {
         tinyDB.putListObject("CartList", listItem);
     }
 }
+    private List<PopularDomain> cartItems;
+
+    public ManagmentCart() {
+        cartItems = new ArrayList<>();
+    }
+    public List<PopularDomain> getCartItems() {
+        return cartItems;
+    }
+//    public void removeItem(int position) {
+//        // Ensure position is within bounds
+//        if (position >= 0 && position < cartItems.size()) {
+//            cartItems.remove(position);
+//        }
+//    }
+
+//    public void removeItemByTitle(String title) {
+//        ArrayList<PopularDomain> listItem = getListCart();
+//        int positionToRemove = -1;
+//
+//        for (int i = 0; i < listItem.size(); i++) {
+//            if (listItem.get(i).getTitle().equals(title)) {
+//                positionToRemove = i;
+//                break;
+//            }
+//        }
+//
+//        if (positionToRemove != -1) {
+//            listItem.remove(positionToRemove);
+//            tinyDB.putListObject("CartList", listItem);
+//            cartAdapter.notifyDataSetChanged();
+//            Toast.makeText(context, "Removed item from your Cart", Toast.LENGTH_SHORT).show();
+//        } else {
+//            Toast.makeText(context, "Item not found in Cart", Toast.LENGTH_SHORT).show();
+//        }
+//    }
+// This method removes an item from the cart at the specified position
+public void removeItem(int position) {
+    ArrayList<PopularDomain> listItem = getListCart();
+
+    // Ensure position is within bounds
+    if (position >= 0 && position < listItem.size()) {
+        listItem.remove(position);
+        tinyDB.putListObject("CartList", listItem);
+        displayCartItems();
+        notifyAdapterDataSetChanged(); // Notify the adapter to refresh the UI
+        Toast.makeText(context, "Removed item from your Cart", Toast.LENGTH_SHORT).show();
+    } else {
+        Toast.makeText(context, "Item not found in Cart", Toast.LENGTH_SHORT).show();
+    }
+}
+
+    // This method is used to notify the CartAdapter about dataset changes
+    private void notifyAdapterDataSetChanged() {
+        if (cartAdapter != null) {
+            cartAdapter.notifyDataSetChanged();
+        }
+    }
+//    remove all item CartItemList
+
+
+    public void removeAllItems() {
+
+        ArrayList<PopularDomain> listItem = getListCart();
+
+        if (!listItem.isEmpty()) {
+            listItem.clear();
+            tinyDB.putListObject("CartList", listItem);
+            notifyAdapterDataSetChanged(); // Notify the adapter to refresh the UI
+            Toast.makeText(context, "Removed all items from your Cart", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "Cart is already empty", Toast.LENGTH_SHORT).show();
+        }
+    }
+//    public void removeItem(int position) {
+//        if (cartList != null && position >= 0 && position < cartList.size()) {
+//            cartList.remove(position);
+//        }
+//    }
 
 }

@@ -10,12 +10,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners;
 import com.mart.cart_Activity.R;
 import com.mart.cart_activity.Activity.DetailActivity;
+import com.mart.cart_activity.Helper.ManagmentCart;
 import com.mart.cart_activity.domain.PopularDomain;
 
 import java.util.ArrayList;
@@ -24,12 +26,14 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
     private final ArrayList<PopularDomain> items;
     private Context context;
+    ManagmentCart managmentCart;
     private CartAdapterListener listener;
 
-    public CartAdapter(ArrayList<PopularDomain> items, Context context, CartAdapterListener listener) {
+    public CartAdapter(ArrayList<PopularDomain> items, Context context, ManagmentCart managementCart, CartAdapterListener listener) {
         this.items = items;
         this.context = context;
         this.listener = listener;
+        this.managmentCart = managementCart;
     }
 
     @NonNull
@@ -87,7 +91,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
                     currentItem.setNumberInChart(Integer.parseInt(String.valueOf(currentQuantity)));
                 } else {
 
-                    holder.scoreTxt.setVisibility(View.GONE);
+                    double totalPrice = items.get(position).getPrice() * currentQuantity;
+                    holder.scoreTxt.setText("$" + totalPrice);
+                    holder.scoreTxt.setVisibility(View.VISIBLE);
                 }
 //                    holder.numberItemTxt.setText(String.valueOf(currentItem.getNumberInChart()));
 
@@ -128,6 +134,25 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
                     holder.scoreTxt.setVisibility(View.VISIBLE);
 
                 }
+            }
+        });
+        // Set long-click listener for removing items
+        // Set long-click listener for removing items
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                // Call the method in ManagmentCart to remove the item
+                // Call the method in ManagmentCart to remove the item
+//                managmentCart.removeItem(1);
+
+                // Notify the adapter about the removal
+                notifyItemRemoved(position);
+
+                showRemoveConfirmationDialog(position);
+                notifyDataSetChanged();
+
+
+                return true;
             }
         });
 
@@ -175,5 +200,35 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
     // Interface to communicate quantity changes to the CartActivity
     public interface CartAdapterListener {
         void onQuantityChanged(int position, int quantity);
+
     }
+    public void updateDataset(ArrayList<PopularDomain> newItems) {
+        items.clear();
+        items.addAll(newItems);
+        notifyDataSetChanged();
+    }
+    private void showRemoveConfirmationDialog(int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage("Are you sure you want to remove this item from your Cart?")
+                .setPositiveButton("OK", (dialog, which) -> {
+                    items.get(position).setNumberInChart(0);
+                    // Call the method in ManagmentCart to remove the item
+                    managmentCart.removeItem(position);
+//                    PopularDomain popularDomain = null;
+//                    popularDomain.setNumberInChart(0);
+                    // Remove the item from the items list
+                    items.remove(position);
+                    // Notify the adapter about the removal
+                    notifyItemRemoved(position);
+                    notifyDataSetChanged();
+                })
+                .setNegativeButton("Cancel", (dialog, which) -> {
+                    // Dismiss the dialog if the user cancels
+                    dialog.dismiss();
+                });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
 }
