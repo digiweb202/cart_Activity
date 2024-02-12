@@ -14,12 +14,23 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.mart.cart_Activity.R;
+import com.mart.cart_activity.Api.ApiService;
+import com.mart.cart_activity.ApiModel.SingleProductModel;
 import com.mart.cart_activity.CartManagment.ManagmentCartList;
 import com.mart.cart_activity.Dao.ProductDao;
 import com.mart.cart_activity.Database.AppDatabase;
+import com.mart.cart_activity.DatabaseApi.RetrofitClient;
 import com.mart.cart_activity.Entities.ProductListEntities;
 import com.mart.cart_activity.Helper.ManagmentCart;
 import com.mart.cart_activity.domain.PopularDomain;
+import com.squareup.picasso.Picasso;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -27,15 +38,29 @@ public class DetailActivity extends AppCompatActivity {
     private int numberOrder =1 ;
     private ManagmentCart managmentCart;
     private Button gotocart;
+    private ImageView itemimage;
+    private TextView titleName;
+    private TextView descriptiontxt;
+    private TextView pricetxt;
 
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        itemimage = findViewById(R.id.viewitem);
+        titleName = findViewById(R.id.titleTxt);
+        descriptiontxt = findViewById(R.id.descriptionTxt);
+        pricetxt = findViewById(R.id.priceTxt);
 
-        getBundles();
-        setupUI();
+
+
+        String productId = getIntent().getStringExtra("PRODUCT_ID");
+        String seller_sku = getIntent().getStringExtra("SELLER_SKU");
+
+        Retrofit retrofit = RetrofitClient.getClient();
+//        getBundles();
+//        setupUI();
         managmentCart= new ManagmentCart(this);
         ImageView shareImageView = findViewById(R.id.imageView8);
         gotocart = findViewById(R.id.go_to_cart);
@@ -57,7 +82,42 @@ public class DetailActivity extends AppCompatActivity {
                 shareContent(); // You can define this method to handle the click action
             }
         });
+        // Create an instance of the ApiService interface
+        ApiService apiService = retrofit.create(ApiService.class);
 
+        // Get parameters from your API input method
+        String productID = productId;
+        String sellerSKU = seller_sku;
+
+
+        // Make the Retrofit call
+        Call<List<SingleProductModel>> call = apiService.getData(productID, sellerSKU);
+        call.enqueue(new Callback<List<SingleProductModel>>() {
+            @Override
+            public void onResponse(Call<List<SingleProductModel>> call, Response<List<SingleProductModel>> response) {
+                if (response.isSuccessful()) {
+                    List<SingleProductModel> data = response.body();
+                    // Process the data as needed
+
+                    String itemimagename = data.get(0).getMain_Image_URL();
+                    Picasso.get().load(itemimagename).into(itemimage);
+                    String itemName = data.get(0).getItem_Name();
+                    titleName.setText(itemName);
+                    descriptiontxt.setText(data.get(0).getProduct_Description());
+                    pricetxt.setText(data.get(0).getYour_Price());
+
+                } else {
+                    // Handle error
+                    Toast.makeText(DetailActivity.this, "Error: " + response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<SingleProductModel>> call, Throwable t) {
+                // Handle failure
+                Toast.makeText(DetailActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
 
     }
 

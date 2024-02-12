@@ -1,6 +1,7 @@
 package com.mart.cart_activity.Api;
 import com.mart.cart_activity.Activity.OtpActivity;
 import com.mart.cart_activity.ApiModel.GetProductModel;
+import com.mart.cart_activity.ApiModel.SingleProductModel;
 import com.mart.cart_activity.ApiResponse.CategoriesResponse;
 import com.mart.cart_activity.ApiResponse.LoginResponse;
 import com.mart.cart_activity.ApiResponse.UserUpdateResponse;
@@ -53,5 +54,11 @@ public interface ApiService {
     Call<List<GetProductModel>> fetchData(
             @Query("count") int count,
             @Query("page") int page
+    );
+
+    @GET("api_single_product_data.php")
+    Call<List<SingleProductModel>> getData(
+            @Query("product_id") String productID,
+            @Query("seller_sku") String sellerSKU
     );
 }
