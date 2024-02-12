@@ -1,5 +1,6 @@
 package com.mart.cart_activity.Api;
 import com.mart.cart_activity.Activity.OtpActivity;
+import com.mart.cart_activity.ApiModel.GetProductModel;
 import com.mart.cart_activity.ApiResponse.CategoriesResponse;
 import com.mart.cart_activity.ApiResponse.LoginResponse;
 import com.mart.cart_activity.ApiResponse.UserUpdateResponse;
@@ -47,4 +48,10 @@ public interface ApiService {
 
     @GET("api_all_browse_categories.php") // Replace with the actual path to your PHP script
     Call<List<CategoriesResponse>> getCategories();
+
+    @GET("api_product_data.php") // replace with your actual API endpoint
+    Call<List<GetProductModel>> fetchData(
+            @Query("count") int count,
+            @Query("page") int page
+    );
 }

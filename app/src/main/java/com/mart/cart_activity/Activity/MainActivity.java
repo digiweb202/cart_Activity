@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView personname;
     private Button signoutbtn;
     UserViewModel userViewModel;
+    private Button Buynow;
     private UserSignupRepository userSignupRepository;
 
     @SuppressLint("MissingInflatedId")
@@ -74,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         categoreisAllbtn = findViewById(R.id.categoriesbtn);
         notificationBtn = findViewById(R.id.notificationbtn);
         personname = findViewById(R.id.personName);
+        Buynow = findViewById(R.id.buynow);
 
 //        Intent intent = getIntent();
 //        String data = intent.getStringExtra("keyName");
@@ -110,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
         explorerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this,ExplorerActivity.class);
+                Intent intent = new Intent(MainActivity.this,infinity_product.class);
                 startActivity(intent);
             }
         });
@@ -211,6 +213,58 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+
+        // Define an array of "See all" button IDs and corresponding category TextView IDs
+        int[] seeAllButtonIds = {R.id.textView7, R.id.textView7s, R.id.textView7snew};
+        int[] categoryTextViewIds = {R.id.textView6, R.id.textView6s, R.id.textView6snew};
+
+        // Set click listeners for the "See all" buttons using a loop
+        for (int i = 0; i < seeAllButtonIds.length; i++) {
+            TextView seeAllButton = findViewById(seeAllButtonIds[i]);
+            final TextView categoryTextView = findViewById(categoryTextViewIds[i]);
+
+            seeAllButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Get the category from the corresponding TextView
+                    String category = categoryTextView.getText().toString();
+
+                    // Start the SingleProductCategories activity and pass the category information
+                    startSingleProductCategories(category);
+                }
+            });
+
+
+        }
+        // Define an array of "See all" button IDs and corresponding category TextView IDs
+        int[] seeAllButtonIdsimg = {R.id.imagecat1,R.id.imagecat4,R.id.imagecat2,R.id.imagecat3};
+        int[] categoryTextViewIdsimg = {R.id.textViewcat1,R.id.textViewcat4,R.id.textViewcat2,R.id.textViewcat3};
+
+        // Set click listeners for the "See all" buttons usng a loop
+        for (int i = 0; i <= seeAllButtonIds.length; i++) {
+            ImageView seeAllButtonsimg = findViewById(seeAllButtonIdsimg[i]);
+            final TextView categoryTextViewimg = findViewById(categoryTextViewIdsimg[i]);
+
+            seeAllButtonsimg.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Get the category from the corresponding TextView
+                    String category = categoryTextViewimg.getText().toString();
+//                        Toast.makeText(MainActivity.this,"Counter:"+seeAllButtonIds.length,Toast.LENGTH_SHORT).show();
+
+                    // Start the SingleProductCategories activity and pass the category information
+                    startSingleProductCategories(category);
+                }
+            });
+        }
+        Buynow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,CartActivity.class);
+                startActivity(intent);
+            }
+        });
         // Sample suggestions
         String[] suggestions = {"Android", "Android 1","android 3","alksdfjsdaf","Java", "Kotlin", "XML", "Studio"};
 
@@ -222,6 +276,13 @@ public class MainActivity extends AppCompatActivity {
         AutoCompleteTextView autoCompleteTextView = findViewById(R.id.autoCompleteTextView);
         autoCompleteTextView.setAdapter(adapter);
         initRecyclerView();
+    }
+
+    private void startSingleProductCategories(String category) {
+        // Start the SingleProductCategories activity and pass the category information
+        Intent intent = new Intent(MainActivity.this, SingleProductCategories.class);
+        intent.putExtra("category", category);
+        startActivity(intent);
     }
 
     private void initRecyclerView() {
