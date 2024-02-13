@@ -1,5 +1,6 @@
 package com.mart.cart_activity.Api;
 import com.mart.cart_activity.Activity.OtpActivity;
+import com.mart.cart_activity.ApiModel.ContentModel;
 import com.mart.cart_activity.ApiModel.GetProductModel;
 import com.mart.cart_activity.ApiModel.SingleProductModel;
 import com.mart.cart_activity.ApiResponse.CategoriesResponse;
@@ -61,4 +62,13 @@ public interface ApiService {
             @Query("product_id") String productID,
             @Query("seller_sku") String sellerSKU
     );
+
+    @GET("api_product_type.php")
+    Call<ApiResponse> getCombinedData(@Query("productType") String productType);
+
+    @GET("api_getcontent.php") // Replace with your actual API endpoint
+    Call<List<ContentModel>> getContent();
+    @GET("api_searchquery.php") // Replace with your actual PHP script name
+    Call<ApiResponse> getWatchesData(@Query("searchQuery") String searchQuery, @Query("page") int page);
+
 }

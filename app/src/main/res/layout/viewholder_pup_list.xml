@@ -69,11 +69,14 @@
         android:id="@+id/titleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="title"
         android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-
+        android:maxLines="1"
+        android:text="title"
+        android:layout_margin="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/view" />
 

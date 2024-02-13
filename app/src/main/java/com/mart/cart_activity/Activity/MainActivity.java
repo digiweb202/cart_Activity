@@ -1,5 +1,7 @@
 package com.mart.cart_activity.Activity;
 
+import static android.content.ContentValues.TAG;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -10,10 +12,16 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -31,7 +39,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mart.cart_Activity.R;
 import com.mart.cart_activity.Adapter.PopularAdapter;
+import com.mart.cart_activity.Adapter.ProductTypeAdapter;
+import com.mart.cart_activity.Adapter.SliderAdapter;
 import com.mart.cart_activity.Adapter.SuggestionsAdapter;
+import com.mart.cart_activity.Api.ApiResponse;
+import com.mart.cart_activity.Api.ApiService;
+import com.mart.cart_activity.ApiModel.ContentModel;
+import com.mart.cart_activity.ApiModel.ProductTypeModel;
+import com.mart.cart_activity.DatabaseApi.RetrofitClient;
 import com.mart.cart_activity.Entities.UserEntities;
 import com.mart.cart_activity.Entities.UserSignupEntities;
 import com.mart.cart_activity.Model.UserViewModel;
@@ -46,6 +61,12 @@ import java.util.List;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.viewpager2.widget.ViewPager2;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class MainActivity extends AppCompatActivity {
     private RecyclerView popularRecyclerView;
     private RecyclerView digitalRecyclearView;
@@ -60,7 +81,15 @@ public class MainActivity extends AppCompatActivity {
     UserViewModel userViewModel;
     private Button Buynow;
     private UserSignupRepository userSignupRepository;
+    private ProductTypeAdapter adapter;
 
+    private ViewPager2 viewPager;
+    private SliderAdapter sliderAdapter;
+
+    private Handler handler;
+    private Runnable runnable;
+    private EditText editTextSearch;
+    EditText editTextTexts;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +104,73 @@ public class MainActivity extends AppCompatActivity {
         categoreisAllbtn = findViewById(R.id.categoriesbtn);
         notificationBtn = findViewById(R.id.notificationbtn);
         personname = findViewById(R.id.personName);
-        Buynow = findViewById(R.id.buynow);
+//        Buynow = findViewById(R.id.buynow);
+        editTextTexts = findViewById(R.id.editTextTexts);
+
+
+        viewPager = findViewById(R.id.viewPager);
+
+
+        // Set a key listener to detect when the user presses Enter on the keyboard
+
+        editTextTexts.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (event != null && (actionId == KeyEvent.KEYCODE_ENTER || event.getAction() == KeyEvent.ACTION_DOWN)) {
+                    // Perform your search task here
+                    performSearch();
+                    return true;
+                }else {
+                    performSearch();
+                    Toast.makeText(MainActivity.this,"Data View",Toast.LENGTH_SHORT).show();
+                }
+                return false;
+            }
+        });
+        // Get the Retrofit client
+        ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
+
+        // Create a call to the API endpoint
+        Call<List<ContentModel>> call = apiService.getContent();
+
+        // Enqueue the call to make an asynchronous request
+        call.enqueue(new Callback<List<ContentModel>>() {
+            @Override
+            public void onResponse(Call<List<ContentModel>> call, Response<List<ContentModel>> response) {
+                if (response.isSuccessful()) {
+                    List<ContentModel> contentList = response.body();
+                    if (contentList != null) {
+                        sliderAdapter = new SliderAdapter(contentList, MainActivity.this);
+                        viewPager.setAdapter(sliderAdapter);
+
+                        // Set up automatic sliding
+                        handler = new Handler(Looper.getMainLooper());
+                        runnable = () -> {
+                            int currentItem = viewPager.getCurrentItem();
+                            int itemCount = sliderAdapter.getItemCount();
+
+                            // Loop back to the first item when reaching the end
+                            viewPager.setCurrentItem((currentItem + 1) % itemCount, true);
+                        };
+
+                        // Schedule automatic sliding with a delay and interval
+                        handler.postDelayed(runnable, 3000); // Delay in milliseconds
+                        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+                            @Override
+                            public void onPageSelected(int position) {
+                                handler.removeCallbacks(runnable);
+                                handler.postDelayed(runnable, 3000); // Interval in milliseconds
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<ContentModel>> call, Throwable t) {
+                // Handle failure
+            }
+        });
 
 //        Intent intent = getIntent();
 //        String data = intent.getStringExtra("keyName");
@@ -214,57 +309,52 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-        // Define an array of "See all" button IDs and corresponding category TextView IDs
+// Define an array of "See all" button IDs and corresponding category TextView IDs
         int[] seeAllButtonIds = {R.id.textView7, R.id.textView7s, R.id.textView7snew};
-        int[] categoryTextViewIds = {R.id.textView6, R.id.textView6s, R.id.textView6snew};
+        String[] categoryTextViewIds = {"A1", "digital", "clouth"}; // Use strings
 
-        // Set click listeners for the "See all" buttons using a loop
+// Set click listeners for the "See all" buttons using a loop
         for (int i = 0; i < seeAllButtonIds.length; i++) {
             TextView seeAllButton = findViewById(seeAllButtonIds[i]);
-            final TextView categoryTextView = findViewById(categoryTextViewIds[i]);
+            final String category = categoryTextViewIds[i]; // Get category directly from the array
 
             seeAllButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    // Get the category from the corresponding TextView
-                    String category = categoryTextView.getText().toString();
-
                     // Start the SingleProductCategories activity and pass the category information
                     startSingleProductCategories(category);
                 }
             });
-
-
         }
-        // Define an array of "See all" button IDs and corresponding category TextView IDs
-        int[] seeAllButtonIdsimg = {R.id.imagecat1,R.id.imagecat4,R.id.imagecat2,R.id.imagecat3};
-        int[] categoryTextViewIdsimg = {R.id.textViewcat1,R.id.textViewcat4,R.id.textViewcat2,R.id.textViewcat3};
 
-        // Set click listeners for the "See all" buttons usng a loop
-        for (int i = 0; i <= seeAllButtonIds.length; i++) {
+        // Define an array of "See all" button IDs and corresponding category TextView IDs
+        int[] seeAllButtonIdsimg = {R.id.imagecat1, R.id.imagecat4, R.id.imagecat2, R.id.imagecat3};
+        String[] categoryTextViewIdsimg = {"digital", "beauty", "clouths", "tools"};
+
+// Set click listeners for the "See all" buttons using a loop
+        for (int i = 0; i < seeAllButtonIdsimg.length; i++) {
             ImageView seeAllButtonsimg = findViewById(seeAllButtonIdsimg[i]);
-            final TextView categoryTextViewimg = findViewById(categoryTextViewIdsimg[i]);
+            final String categoryTextViewimg = (categoryTextViewIdsimg[i]);
 
             seeAllButtonsimg.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     // Get the category from the corresponding TextView
-                    String category = categoryTextViewimg.getText().toString();
-//                        Toast.makeText(MainActivity.this,"Counter:"+seeAllButtonIds.length,Toast.LENGTH_SHORT).show();
+
 
                     // Start the SingleProductCategories activity and pass the category information
-                    startSingleProductCategories(category);
+                    startSingleProductCategories(categoryTextViewimg);
                 }
             });
         }
-        Buynow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this,CartActivity.class);
-                startActivity(intent);
-            }
-        });
+
+//        Buynow.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(MainActivity.this,CartActivity.class);
+//                startActivity(intent);
+//            }
+//        });
         // Sample suggestions
         String[] suggestions = {"Android", "Android 1","android 3","alksdfjsdaf","Java", "Kotlin", "XML", "Studio"};
 
@@ -272,15 +362,15 @@ public class MainActivity extends AppCompatActivity {
         SuggestionsAdapter adapter = new SuggestionsAdapter(this,
                 android.R.layout.simple_dropdown_item_1line, Arrays.asList(suggestions));
 
-        // AutoCompleteTextView
-        AutoCompleteTextView autoCompleteTextView = findViewById(R.id.autoCompleteTextView);
-        autoCompleteTextView.setAdapter(adapter);
+//        // AutoCompleteTextView
+//        EditText autoCompleteTextView = findViewById(R.id.autoCompleteTextView);
+//        autoCompleteTextView.setAdapter(adapter);
         initRecyclerView();
     }
 
     private void startSingleProductCategories(String category) {
         // Start the SingleProductCategories activity and pass the category information
-        Intent intent = new Intent(MainActivity.this, SingleProductCategories.class);
+        Intent intent = new Intent(MainActivity.this, ProductTypeActivity.class);
         intent.putExtra("category", category);
         startActivity(intent);
     }
@@ -309,10 +399,17 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager clothLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         clothRecyclerView.setLayoutManager(clothLayoutManager);
 
+
+
         PopularAdapter adapter = new PopularAdapter(items);
         popularRecyclerView.setAdapter(adapter);
         digitalRecyclearView.setAdapter(adapter);
         clothRecyclerView.setAdapter(adapter);
+
+
+        fetchDataFromServer("A1");
+        fetchDataFromServerDigital("digital");
+        fetchDataFromServerCloth("clouth");
     }
 
 
@@ -387,4 +484,126 @@ private void showImageDialog() {
         }
     }
 
+    private void fetchDataFromServer(String productType) {
+        ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
+        Call<ApiResponse> call = apiService.getCombinedData(productType);
+
+        call.enqueue(new retrofit2.Callback<ApiResponse>() {
+            @Override
+            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                if (response.isSuccessful()) {
+                    ApiResponse apiResponse = response.body();
+                    if (apiResponse != null && apiResponse.isSuccess()) {
+                        List<ProductTypeModel> productTypeModelList = apiResponse.getData();
+                        if (productTypeModelList != null && !productTypeModelList.isEmpty()) {
+                            adapter = new ProductTypeAdapter(productTypeModelList, MainActivity.this);
+                            popularRecyclerView.setAdapter(adapter);
+                        } else {
+                            Log.e(TAG, "Empty or null data in the API response");
+                        }
+                    } else {
+                        Log.e(TAG, "Unsuccessful API response");
+                    }
+                } else {
+                    Log.e(TAG, "Server returned an error: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse> call, Throwable t) {
+                Log.e(TAG, "Error fetching data from server: " + t.getMessage());
+            }
+        });
+    }
+
+    private void fetchDataFromServerDigital(String productType) {
+        ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
+        Call<ApiResponse> call = apiService.getCombinedData(productType);
+
+        call.enqueue(new retrofit2.Callback<ApiResponse>() {
+            @Override
+            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                if (response.isSuccessful()) {
+                    ApiResponse apiResponse = response.body();
+                    if (apiResponse != null && apiResponse.isSuccess()) {
+                        List<ProductTypeModel> productTypeModelList = apiResponse.getData();
+                        if (productTypeModelList != null && !productTypeModelList.isEmpty()) {
+                            adapter = new ProductTypeAdapter(productTypeModelList, MainActivity.this);
+                            digitalRecyclearView.setAdapter(adapter);
+                        } else {
+                            Log.e(TAG, "Empty or null data in the API response");
+                        }
+                    } else {
+                        Log.e(TAG, "Unsuccessful API response");
+                    }
+                } else {
+                    Log.e(TAG, "Server returned an error: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse> call, Throwable t) {
+                Log.e(TAG, "Error fetching data from server: " + t.getMessage());
+            }
+        });
+    }
+    private void fetchDataFromServerCloth(String productType) {
+        ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
+        Call<ApiResponse> call = apiService.getCombinedData(productType);
+
+        call.enqueue(new retrofit2.Callback<ApiResponse>() {
+            @Override
+            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                if (response.isSuccessful()) {
+                    ApiResponse apiResponse = response.body();
+                    if (apiResponse != null && apiResponse.isSuccess()) {
+                        List<ProductTypeModel> productTypeModelList = apiResponse.getData();
+                        if (productTypeModelList != null && !productTypeModelList.isEmpty()) {
+                            adapter = new ProductTypeAdapter(productTypeModelList, MainActivity.this);
+                            clothRecyclerView.setAdapter(adapter);
+                        } else {
+                            Log.e(TAG, "Empty or null data in the API response");
+                        }
+                    } else {
+                        Log.e(TAG, "Unsuccessful API response");
+                    }
+                } else {
+                    Log.e(TAG, "Server returned an error: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse> call, Throwable t) {
+                Log.e(TAG, "Error fetching data from server: " + t.getMessage());
+            }
+        });
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Remove callbacks to prevent memory leaks
+        if (handler != null) {
+            handler.removeCallbacks(runnable);
+        }
+    }
+    private void performSearch() {
+        String searchQuery = editTextTexts.getText().toString().trim();
+
+        // Check if the search query is not empty
+        if (!searchQuery.isEmpty()) {
+            // Show a toast with the entered text
+            Toast.makeText(MainActivity.this, "Search query: " + searchQuery, Toast.LENGTH_SHORT).show();
+
+
+            // Pass the search query to SearchResultActivity
+            // You can use Intent to pass data between activities
+            Intent intent = new Intent(MainActivity.this, SearchResultActivity.class);
+            intent.putExtra("searchQuery", searchQuery);
+            startActivity(intent);
+            // TODO: Add logic for searching or navigating to search results
+        } else {
+            // If the search query is empty, you can show a different message or handle it as needed
+            Toast.makeText(MainActivity.this, "Please enter a search query", Toast.LENGTH_SHORT).show();
+        }
+    }
 }

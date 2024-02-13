@@ -96,51 +96,22 @@
                 android:layout_height="160dp"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="16dp"
+                android:background="@drawable/slider_background"
                 android:layout_marginEnd="24dp"
                 android:layout_marginBottom="16dp">
-                <ImageView
-                    android:id="@+id/imageView3"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0"
-                    app:srcCompat="@drawable/top_banner" />
-                <TextView
-                    android:id="@+id/textView3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginBottom="16dp"
-                    android:text="Discount 20% For \n Headphones!"
-                    android:textColor="@color/white"
-                    android:textSize="18sp"
-                    android:visibility="invisible"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guideline"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintGuide_percent="0.1" />
 
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/button"
-                    android:layout_width="0dp"
-                    android:layout_height="38dp"
-                    android:layout_marginEnd="16dp"
-                    android:background="@drawable/purple_background"
-                    android:text="Buy Now"
-                    android:visibility="invisible"
-                    android:textColor="@color/white"
-                    app:layout_constraintBottom_toBottomOf="@+id/textView3"
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/viewPager"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/textView3" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                </androidx.viewpager2.widget.ViewPager2>
+
+
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -164,6 +135,7 @@
                 <com.google.android.material.card.MaterialCardView
                     style="@style/Widget.MaterialComponents.CardView"
                     android:layout_width="0dp"
+                    android:id="@+id/digitallayout"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
                     android:layout_rowWeight="1"
@@ -190,7 +162,7 @@
                             android:id="@+id/cards"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Digitals"
+                            android:text="digital"
                             android:textSize="18sp"
                             android:layout_below="@id/cart1"
                             android:layout_marginTop="8dp"
@@ -229,7 +201,7 @@
                             android:id="@+id/cards"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Cloths"
+                            android:text="clouth"
                             android:textSize="18sp"
                             android:layout_below="@id/cloths"
                             android:layout_marginTop="8dp"
@@ -268,7 +240,7 @@
                             android:id="@+id/cards"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Tools"
+                            android:text="tools"
                             android:textSize="18sp"
                             android:layout_below="@id/tools"
                             android:layout_marginTop="8dp"
@@ -346,7 +318,7 @@
                             android:id="@+id/cards"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Cart1"
+                            android:text="A1"
                             android:textSize="18sp"
                             android:layout_below="@id/cat1"
                             android:layout_marginTop="8dp"

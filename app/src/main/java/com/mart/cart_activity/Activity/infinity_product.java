@@ -2,6 +2,7 @@ package com.mart.cart_activity.Activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -39,7 +40,7 @@ public class infinity_product extends AppCompatActivity {
         dataList = new ArrayList<>();
         adapter = new ProductAdapter(infinity_product.this, dataList);
         recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));  // Change this line to use GridLayoutManager
 
         // Implement infinite scrolling
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -47,7 +48,7 @@ public class infinity_product extends AppCompatActivity {
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
-                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                GridLayoutManager layoutManager = (GridLayoutManager) recyclerView.getLayoutManager(); // Change to GridLayoutManager
                 int visibleItemCount = layoutManager.getChildCount();
                 int totalItemCount = layoutManager.getItemCount();
                 int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
@@ -65,6 +66,7 @@ public class infinity_product extends AppCompatActivity {
         // Initial data loading
         fetchData();
     }
+
 
     private void fetchData() {
         RetrofitClient.getClient()

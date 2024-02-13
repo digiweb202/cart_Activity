@@ -1,10 +1,13 @@
 package com.mart.cart_activity.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.GridLayout;
 import android.widget.ImageView;
@@ -16,7 +19,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.material.card.MaterialCardView;
 import com.mart.cart_Activity.R;
+import com.mart.cart_activity.Adapter.SliderAdapter;
 import com.mart.cart_activity.Api.ApiService;
+import com.mart.cart_activity.ApiModel.ContentModel;
 import com.mart.cart_activity.ApiResponse.CategoriesResponse;
 import com.mart.cart_activity.DatabaseApi.RetrofitClient;
 
@@ -32,6 +37,12 @@ public class ProductCategoriesActivity extends AppCompatActivity {
     private TextView personview;
     GoogleSignInOptions gso;
     GoogleSignInClient gsc;
+
+    private ViewPager2 viewPager;
+    private SliderAdapter sliderAdapter;
+
+    private Handler handler;
+    private Runnable runnable;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,13 +88,59 @@ public class ProductCategoriesActivity extends AppCompatActivity {
                         String category = categoryTextView.getText().toString();
 
                         // Start the CategoriesActivity and pass the category information
-                        Intent intent = new Intent(ProductCategoriesActivity.this, SingleProductCategories.class);
+                        Intent intent = new Intent(ProductCategoriesActivity.this, ProductTypeActivity.class);
                         intent.putExtra("category", category);
                         startActivity(intent);
                     }
                 });
             }
         }
+        viewPager = findViewById(R.id.viewPager);
+
+        // Get the Retrofit client
+        ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
+
+        // Create a call to the API endpoint
+        Call<List<ContentModel>> call = apiService.getContent();
+
+        // Enqueue the call to make an asynchronous request
+        call.enqueue(new Callback<List<ContentModel>>() {
+            @Override
+            public void onResponse(Call<List<ContentModel>> call, Response<List<ContentModel>> response) {
+                if (response.isSuccessful()) {
+                    List<ContentModel> contentList = response.body();
+                    if (contentList != null) {
+                        sliderAdapter = new SliderAdapter(contentList, ProductCategoriesActivity.this);
+                        viewPager.setAdapter(sliderAdapter);
+
+                        // Set up automatic sliding
+                        handler = new Handler(Looper.getMainLooper());
+                        runnable = () -> {
+                            int currentItem = viewPager.getCurrentItem();
+                            int itemCount = sliderAdapter.getItemCount();
+
+                            // Loop back to the first item when reaching the end
+                            viewPager.setCurrentItem((currentItem + 1) % itemCount, true);
+                        };
+
+                        // Schedule automatic sliding with a delay and interval
+                        handler.postDelayed(runnable, 3000); // Delay in milliseconds
+                        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+                            @Override
+                            public void onPageSelected(int position) {
+                                handler.removeCallbacks(runnable);
+                                handler.postDelayed(runnable, 3000); // Interval in milliseconds
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<ContentModel>> call, Throwable t) {
+                // Handle failure
+            }
+        });
     }
     // Function to make the API request
     //Categories Details fetch api code
