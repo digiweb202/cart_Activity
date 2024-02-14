@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -24,6 +26,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.mart.cart_activity.Adapter.CartAdapter;
+import com.mart.cart_activity.Adapter.ProductOrderListAdapter;
 import com.mart.cart_activity.Entities.UserSignupEntities;
 import com.mart.cart_activity.Helper.ManagmentCart;
 import com.mart.cart_Activity.R;
@@ -36,6 +39,9 @@ import org.w3c.dom.Text;
 import pl.droidsonroids.gif.GifImageButton;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class CartActivity extends AppCompatActivity implements CartAdapter.CartAdapterListener {
     UserViewModel userViewModel;
@@ -60,6 +66,8 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
     private Button payment;
     double amTotal;
     TextView address;
+    RecyclerView listcycle;
+    String email;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +85,19 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
         orderButton = findViewById(R.id.button2);
         payment = findViewById(R.id.pay);
         address = findViewById(R.id.textView20);
+        listcycle = findViewById(R.id.cartView);
+
+
+
+        // Assuming productList is your list of products
+        List<List<String>> productList = ProductStroageList.getInstance().getProductList();
+
+        // Create and set up the adapter
+        ProductOrderListAdapter productAdapter = new ProductOrderListAdapter(this, productList);
+
+        // Assuming you have a ListView with the id "productListView" in your layout
+        ListView productListView = findViewById(R.id.cartView);
+        productListView.setAdapter(productAdapter);
 
 //        TextViewbutton = findViewById(R.id.mycart);
 
@@ -132,9 +153,41 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
             public void onClick(View v) {
 
 //                managementCart.removeItem(2);
-                managementCart.removeAllItems();
-                makepayment();
-                showGifDialog();
+//                managementCart.removeAllItems();
+//                makepayment();
+//                showGifDialog();
+
+// Example usage to get the wishlist items
+                Set<String> wishlistItems = getWishlistFromSharedPreferences();
+
+// Iterate through the set and do something with each wishlist item
+                for (String wishlistItem : wishlistItems) {
+                    // Perform actions with each wishlist item (e.g., display in UI, log, etc.)
+                    Log.d("Wishlist::", wishlistItem);
+                    Toast.makeText(CartActivity.this,"DATA:"+wishlistItem,Toast.LENGTH_SHORT).show();
+                }
+//                OrderTask orderTask = new OrderTask("2", email, "fsldke3s", "skldfjied", "23", "348743", CartActivity.this);
+//                orderTask.execute();
+
+                List<List<String>> productList = ProductStroageList.getInstance().getProductList();
+                StringBuilder toastMessage = new StringBuilder("Product List:\n");
+
+                for (List<String> productPair : productList) {
+                    // Assuming each product pair has two elements (product ID and seller SKU)
+                    if (productPair.size() == 2) {
+                        toastMessage.append("Product ID: ").append(productPair.get(0))
+                                .append(", Seller SKU: ").append(productPair.get(1))
+                                .append("\n");
+
+                        // Pass product ID and seller SKU as strings to the OrderTask
+                        OrderTask orderTask = new OrderTask("2", email, productPair.get(0), productPair.get(1), "23", "348743", CartActivity.this);
+                        orderTask.execute();
+                    }
+                }
+
+// Display the product list using Toast
+                Toast.makeText(CartActivity.this, toastMessage.toString(), Toast.LENGTH_SHORT).show();
+
             }
         });
         payment.setOnClickListener(new View.OnClickListener() {
@@ -154,6 +207,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
                 if (user != null) {
                     // Populate the UI fields with the user data
                     address.setText(user.getAddress());
+                    email = user.getEmail();
 //                    txtaddress.setText(user.getAddress());
 //                    txtemail.setText(user.getEmail());
 //                    txtnumber.setText(user.getNumber());
@@ -183,13 +237,24 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
 
 
     private void setupRecyclerView() {
-        RecyclerView cartView = findViewById(R.id.cartView);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        cartView.setLayoutManager(layoutManager);
+        RecyclerView cartViews = findViewById(R.id.cartView);
 
-        cartAdapter = new CartAdapter(managementCart.getListCart(), this, managementCart, this);
+        // Assuming productList is your list of products
+        List<List<String>> productList = ProductStroageList.getInstance().getProductList();
 
-        cartView.setAdapter(cartAdapter);
+        // Create and set up the adapter
+        ProductOrderListAdapter productAdapter = new ProductOrderListAdapter(this, productList);
+
+        // Assuming you have a ListView with the id "productListView" in your layout
+        ListView productListView = findViewById(R.id.cartView);
+        productListView.setAdapter(productAdapter);
+
+//        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+//        cartView.setLayoutManager(layoutManager);
+//
+//        cartAdapter = new CartAdapter(managementCart.getListCart(), this, managementCart, this);
+//
+//        cartView.setAdapter(cartAdapter);
     }
 
     private void showPaymentMethodDialog() {
@@ -316,4 +381,20 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
 
 //        paytext.setText("Failed and cause is :"+s);
     }
+
+    private Set<String> getWishlistFromSharedPreferences() {
+        SharedPreferences sharedPreferences = getSharedPreferences("WishlistPrefs", MODE_PRIVATE);
+        return sharedPreferences.getStringSet("WISHLIST_SET", new HashSet<>());
+    }
+    public void onOrderComplete(String result) {
+        if (result != null && result.startsWith("Error:")) {
+            // Show Toast if there's an error
+            Toast.makeText(CartActivity.this, result, Toast.LENGTH_SHORT).show();
+        } else {
+            // Proceed with startActivity(intent) if status code is 200
+            Intent intent = new Intent(CartActivity.this, CartActivity.class);
+            startActivity(intent);
+        }
+    }
+
 }

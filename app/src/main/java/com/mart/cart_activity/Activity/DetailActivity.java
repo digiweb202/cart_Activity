@@ -48,8 +48,10 @@ public class DetailActivity extends AppCompatActivity {
     private TextView descriptiontxt;
     private TextView pricetxt;
     private ImageView wishlist;
+    private Button addBtn;
     String productID;
     String sellerSKU;
+    Button buyAdd;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -61,13 +63,38 @@ public class DetailActivity extends AppCompatActivity {
         descriptiontxt = findViewById(R.id.descriptionTxt);
         pricetxt = findViewById(R.id.priceTxt);
         wishlist = findViewById(R.id.imageView7);
+        addBtn = findViewById(R.id.buyBtn);
+
+        addBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+//                Toast.makeText(DetailActivity.this,"Check//:",Toast.LENGTH_SHORT).show();
+                ProductStroageList.getInstance().addProduct(productID,sellerSKU);
+
+                List<List<String>> productList = ProductStroageList.getInstance().getProductList();
+                StringBuilder toastMessage = new StringBuilder("Product List:\n");
+
+                for (List<String> productPair : productList) {
+                    // Assuming each product pair has two elements (product ID and seller SKU)
+                    if (productPair.size() == 2) {
+                        toastMessage.append("Product ID: ").append(productPair.get(0))
+                                .append(", Seller SKU: ").append(productPair.get(1))
+                                .append("\n");
+                    }
+                }
+
+                Toast.makeText(DetailActivity.this, toastMessage.toString(), Toast.LENGTH_SHORT).show();
 
 
+
+            }
+        });
         wishlist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Store product ID and seller SKU in SharedPreferences
-                addToWishlist(productID, sellerSKU);
+//                addToWishlist(productID, sellerSKU);
                 Toast.makeText(DetailActivity.this,"Added Your WishList is product//:",Toast.LENGTH_SHORT).show();
             }
         });
@@ -130,6 +157,8 @@ public class DetailActivity extends AppCompatActivity {
                     descriptiontxt.setText(data.get(0).getProduct_Description());
                     pricetxt.setText(data.get(0).getYour_Price());
 
+
+
                 } else {
                     // Handle error
                     Toast.makeText(DetailActivity.this, "Error: " + response.message(), Toast.LENGTH_SHORT).show();
@@ -165,7 +194,7 @@ public class DetailActivity extends AppCompatActivity {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Your subject"); // Optional subject
-        shareIntent.putExtra(Intent.EXTRA_TEXT, "Share play store link your contact people with//:"); // Content to be shared
+        shareIntent.putExtra(Intent.EXTRA_TEXT, "Share play store link your contact people with//:ddddd"); // Content to be shared
 
         // Create a chooser to show available sharing apps
         Intent chooserIntent = Intent.createChooser(shareIntent, "Share via");
@@ -183,7 +212,7 @@ public class DetailActivity extends AppCompatActivity {
             TextView descriptionTxt = findViewById(R.id.descriptionTxt);
             TextView reviewTxt = findViewById(R.id.reviewTxt);
             TextView ratingTxt = findViewById(R.id.ratingTxt);
-            Button btnAdd = findViewById(R.id.buyBtn);
+            buyAdd = findViewById(R.id.buyBtn);
             ImageView backbtn = findViewById(R.id.backbtn);
 
             int drawableResourceId = getResources().getIdentifier(object.getPicUrl(), "drawable", getPackageName());
@@ -195,44 +224,49 @@ public class DetailActivity extends AppCompatActivity {
             reviewTxt.setText(String.valueOf(object.getReview()));
             ratingTxt.setText(String.valueOf(object.getScore()));
 
-            btnAdd.setOnClickListener(new View.OnClickListener() {
+            buyAdd.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
+
+
+//                    addToWishlist(productID, sellerSKU);
+                    Toast.makeText(DetailActivity.this,"ProductID"+productID+"SellSKU"+sellerSKU,Toast.LENGTH_SHORT).show();
                     // Handle button click
                     // You may want to add your logic here
                     // For example, updating the object or performing some action
 
-                    try {
-//                        object.setNumberInChart(numberOrder);
-//                        object.setNumberInChart(object.getNumberInChart() + 1 > object.getNumberInChart() ? object.getNumberInChart() + 1 : object.getNumberInChart());
-                            object.setNumberInChart(1);
-                        managmentCart.insertFood(object);
-                        // Assuming you have an instance of AppDatabase
-                        AppDatabase appDatabase = AppDatabase.getInstance(getApplicationContext());
-
-// Get the ProductDao from AppDatabase
-                        ProductDao productDao = appDatabase.productDao();
-
-// Now, you can use productDao in ManagmentCartList
-                        ManagmentCartList managmentCartList = new ManagmentCartList(productDao);
-
-// Rest of your code
-                        ProductListEntities product = new ProductListEntities(object.getPicUrl(), object.getTitle(), object.getPrice());
-
-                        long productId = managmentCartList.insertProduct(product);
-
-                        if (productId != -1) {
-                            // Product inserted successfully
-                            Toast.makeText(DetailActivity.this, "Product added to cart", Toast.LENGTH_SHORT).show();
-                        } else {
-                            // Error inserting product
-                            Toast.makeText(DetailActivity.this, "Error adding product to cart", Toast.LENGTH_SHORT).show();
-                        }
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(DetailActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
+//                    try {
+////                        object.setNumberInChart(numberOrder);
+////                        object.setNumberInChart(object.getNumberInChart() + 1 > object.getNumberInChart() ? object.getNumberInChart() + 1 : object.getNumberInChart());
+//                            object.setNumberInChart(1);
+//                        managmentCart.insertFood(object);
+//                        // Assuming you have an instance of AppDatabase
+//                        AppDatabase appDatabase = AppDatabase.getInstance(getApplicationContext());
+//
+//// Get the ProductDao from AppDatabase
+//                        ProductDao productDao = appDatabase.productDao();
+//
+//// Now, you can use productDao in ManagmentCartList
+//                        ManagmentCartList managmentCartList = new ManagmentCartList(productDao);
+//
+//// Rest of your code
+//                        ProductListEntities product = new ProductListEntities(object.getPicUrl(), object.getTitle(), object.getPrice());
+//
+//                        long productId = managmentCartList.insertProduct(product);
+//
+//                        if (productId != -1) {
+//                            // Product inserted successfully
+//                            Toast.makeText(DetailActivity.this, "Product added to cart", Toast.LENGTH_SHORT).show();
+//                        } else {
+//                            // Error inserting product
+//                            Toast.makeText(DetailActivity.this, "Error adding product to cart", Toast.LENGTH_SHORT).show();
+//                        }
+//
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                        Toast.makeText(DetailActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+//                    }
 
 
 
