@@ -222,7 +222,8 @@ public class LoginActivity extends AppCompatActivity {
                     txt_pass.setError("Password is required");
                     return;
                 }
-
+                LoginTask loginTask = new LoginTask(usernames, passwords,LoginActivity.this);
+                loginTask.execute();
                 new LoginAsyncTask(userSignupRepository).execute(usernames, passwords);
             }
         });
@@ -524,4 +525,31 @@ public class LoginActivity extends AppCompatActivity {
 //
 //
 //    }
+
+    public void onLoginComplete(String result) {
+        if (result != null && result.startsWith("Error:")) {
+            // Show Toast if there's an error
+            Toast.makeText(LoginActivity.this, result, Toast.LENGTH_SHORT).show();
+        } else {
+            try {
+                JSONObject responseJson = new JSONObject(result);
+                int statusCode = responseJson.getInt("status");
+
+                if (statusCode == 200) {
+                    // Login successful, proceed to the next activity
+//                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+//                    startActivity(intent);
+                } else {
+                    // Login failed, show appropriate message
+                    String message = responseJson.getString("message");
+                    Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+                // Handle JSON parsing error if needed
+                Toast.makeText(LoginActivity.this, "Error parsing response", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
 }

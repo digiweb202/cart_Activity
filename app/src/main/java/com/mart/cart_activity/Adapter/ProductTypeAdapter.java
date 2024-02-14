@@ -88,7 +88,7 @@ public class ProductTypeAdapter extends RecyclerView.Adapter<ProductTypeAdapter.
 
         public void bind(ProductTypeModel productTypeModel) {
             // Bind data to your views here
-            productNameTextView.setText(productTypeModel.watches.getProduct_ID());
+            productNameTextView.setText(productTypeModel.watches.getItem_Name());
             // Check if watches_img list is not empty before accessing elements
             if (!productTypeModel.watches_img.isEmpty()) {
                 ProductListImgModel firstWatchesImg = productTypeModel.watches_img.get(0);

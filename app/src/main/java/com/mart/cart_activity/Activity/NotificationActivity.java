@@ -30,17 +30,8 @@ NotificationActivity extends AppCompatActivity {
 
         // Dummy data for notifications
         List<Notification> notifications = new ArrayList<>();
-        notifications.add(new Notification("Notification Title 1", "Notification Message 1", "2 hours ago"));
-        notifications.add(new Notification("Notification Title 2", "Notification Message 2", "1 day ago"));
-        notifications.add(new Notification("Notification Title 2", "Notification Message 2", "1 day ago"));
-        notifications.add(new Notification("Notification Title 2", "Notification Message 2", "1 day ago"));
-        notifications.add(new Notification("Notification Title 2", "Notification Message 2", "1 day ago"));
-        notifications.add(new Notification("Notification Title 2", "Notification Message 2", "1 day ago"));
-        notifications.add(new Notification("Notification Title 2", "Notification Message 2", "1 day ago"));
-        notifications.add(new Notification("Notification Title 2", "Notification Message 2", "1 day ago"));
-        notifications.add(new Notification("Notification Title 2", "Notification Message 2", "1 day ago"));
-        notifications.add(new Notification("Notification Title 2", "Notification Message 2", "1 day ago"));
-        notifications.add(new Notification("Notification Title 2", "Notification Message 2", "1 day ago"));
+        notifications.add(new Notification("Welcome", "Thank you for part of our group.", "2 hours ago"));
+
 
 
         NotificationAdapter notificationAdapter = new NotificationAdapter(notifications);

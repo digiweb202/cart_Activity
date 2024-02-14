@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
@@ -11,6 +12,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.util.ArrayList;
+
 
 import com.bumptech.glide.Glide;
 import com.mart.cart_Activity.R;
@@ -25,7 +28,9 @@ import com.mart.cart_activity.Helper.ManagmentCart;
 import com.mart.cart_activity.domain.PopularDomain;
 import com.squareup.picasso.Picasso;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -42,6 +47,9 @@ public class DetailActivity extends AppCompatActivity {
     private TextView titleName;
     private TextView descriptiontxt;
     private TextView pricetxt;
+    private ImageView wishlist;
+    String productID;
+    String sellerSKU;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -52,7 +60,17 @@ public class DetailActivity extends AppCompatActivity {
         titleName = findViewById(R.id.titleTxt);
         descriptiontxt = findViewById(R.id.descriptionTxt);
         pricetxt = findViewById(R.id.priceTxt);
+        wishlist = findViewById(R.id.imageView7);
 
+
+        wishlist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Store product ID and seller SKU in SharedPreferences
+                addToWishlist(productID, sellerSKU);
+                Toast.makeText(DetailActivity.this,"Added Your WishList is product//:",Toast.LENGTH_SHORT).show();
+            }
+        });
 
 
         String productId = getIntent().getStringExtra("PRODUCT_ID");
@@ -86,8 +104,8 @@ public class DetailActivity extends AppCompatActivity {
         ApiService apiService = retrofit.create(ApiService.class);
 
         // Get parameters from your API input method
-        String productID = productId;
-        String sellerSKU = seller_sku;
+        productID = productId;
+        sellerSKU = seller_sku;
 
 
         // Make the Retrofit call
@@ -103,6 +121,12 @@ public class DetailActivity extends AppCompatActivity {
                     Picasso.get().load(itemimagename).into(itemimage);
                     String itemName = data.get(0).getItem_Name();
                     titleName.setText(itemName);
+                    titleName.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Toast.makeText(DetailActivity.this, itemName, Toast.LENGTH_SHORT).show();
+                        }
+                    });
                     descriptiontxt.setText(data.get(0).getProduct_Description());
                     pricetxt.setText(data.get(0).getYour_Price());
 
@@ -141,7 +165,7 @@ public class DetailActivity extends AppCompatActivity {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Your subject"); // Optional subject
-        shareIntent.putExtra(Intent.EXTRA_TEXT, "Your shared content goes here."); // Content to be shared
+        shareIntent.putExtra(Intent.EXTRA_TEXT, "Share play store link your contact people with//:"); // Content to be shared
 
         // Create a chooser to show available sharing apps
         Intent chooserIntent = Intent.createChooser(shareIntent, "Share via");
@@ -223,5 +247,43 @@ public class DetailActivity extends AppCompatActivity {
             finish(); // You might want to finish the activity if the object is null
         }
     }
+    // Method to save product ID and seller SKU in SharedPreferences
+    // Method to add a product to the wishlist in SharedPreferences
+    // Method to add a product to the wishlist in SharedPreferences
+    private void addToWishlist(String productId, String sellerSku) {
+        SharedPreferences sharedPreferences = getSharedPreferences("WishlistPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        // Retrieve the existing set of wishlist items
+        Set<String> wishlistSet = sharedPreferences.getStringSet("WISHLIST_SET", new HashSet<>());
+
+        // Check if the product is already in the wishlist
+        String wishlistItem = "Product ID: " + productId + ", Seller SKU: " + sellerSku;
+        if (!wishlistSet.contains(wishlistItem)) {
+            // Product not in the wishlist, add it
+            wishlistSet.add(wishlistItem);
+
+            // Save the updated wishlist set
+            editor.putStringSet("WISHLIST_SET", wishlistSet);
+
+            // Apply the changes
+            editor.apply();
+
+            // Show a toast indicating that the product has been added to the wishlist
+            Toast.makeText(this, "Added to Wishlist", Toast.LENGTH_SHORT).show();
+        } else {
+            // Show a toast indicating that the product is already in the wishlist
+            Toast.makeText(this, "Product already in Wishlist", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    // Method to retrieve the list of wishlist items from SharedPreferences
+    private List<String> getWishlistFromSharedPreferences() {
+        SharedPreferences sharedPreferences = getSharedPreferences("WishlistPrefs", MODE_PRIVATE);
+        Set<String> wishlistSet = sharedPreferences.getStringSet("WISHLIST_SET", new HashSet<>());
+        return new ArrayList<>(wishlistSet);
+    }
+
 
 }

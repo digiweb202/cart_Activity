@@ -18,12 +18,16 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.mart.cart_activity.Adapter.CartAdapter;
+import com.mart.cart_activity.Entities.UserSignupEntities;
 import com.mart.cart_activity.Helper.ManagmentCart;
 import com.mart.cart_Activity.R;
+import com.mart.cart_activity.Model.UserViewModel;
 import com.razorpay.Checkout;
 
 import org.json.JSONObject;
@@ -34,7 +38,7 @@ import pl.droidsonroids.gif.GifImageButton;
 import java.util.ArrayList;
 
 public class CartActivity extends AppCompatActivity implements CartAdapter.CartAdapterListener {
-
+    UserViewModel userViewModel;
     private ImageView Backbtn;
     private ImageView ProfileEdit;
     private ImageView Method_Payment;
@@ -55,6 +59,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
     private Button orderButton;
     private Button payment;
     double amTotal;
+    TextView address;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +76,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
         TotalAmount = findViewById(R.id.totalTxt);
         orderButton = findViewById(R.id.button2);
         payment = findViewById(R.id.pay);
+        address = findViewById(R.id.textView20);
 
 //        TextViewbutton = findViewById(R.id.mycart);
 
@@ -137,10 +143,34 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
 
             }
         });
+
+
+        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+        int userId = 1;
+
+        userViewModel.getUserById(userId).observe(this, new Observer<UserSignupEntities>() {
+            @Override
+            public void onChanged(UserSignupEntities user) {
+                if (user != null) {
+                    // Populate the UI fields with the user data
+                    address.setText(user.getAddress());
+//                    txtaddress.setText(user.getAddress());
+//                    txtemail.setText(user.getEmail());
+//                    txtnumber.setText(user.getNumber());
+//                    UserName.setText(user.getUsername());
+//                    String userNickname = user.getNikname();
+//                    txtnikname.setText(userNickname != null ? "@" + userNickname : "@");
+
+                }
+            }
+        });
+
         setVariables();
         initList();
         setupRecyclerView();
         calculatorCart();
+
+
     }
 
     private void setVariables() {

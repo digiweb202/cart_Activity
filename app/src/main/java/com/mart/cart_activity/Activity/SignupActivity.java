@@ -17,6 +17,8 @@ import android.widget.Toast;
 
 import com.mart.cart_Activity.R;
 import com.mart.cart_activity.Api.ApiService;
+import com.mart.cart_activity.ApiModel.UserModel;
+import com.mart.cart_activity.DatabaseApi.ApiClient;
 import com.mart.cart_activity.DatabaseApi.RetrofitClient;
 import com.mart.cart_activity.Entities.UserSignupEntities;
 import com.mart.cart_activity.Repository.UserSignupRepository;
@@ -34,7 +36,7 @@ public class SignupActivity extends AppCompatActivity {
     private EditText Etd_pass;
     private EditText Etd_confirm_pass;
     private UserSignupRepository userSignupRepository;
-
+    private ApiService apiService;
     private LinearLayout signinTextBtn;
     @SuppressLint("MissingInflatedId")
     @Override
@@ -53,12 +55,15 @@ public class SignupActivity extends AppCompatActivity {
         // Initialize Retrofit interface
         ApiService apiInterface = RetrofitClient.getClient().create(ApiService.class);
 
+        apiService = ApiClient.getApiClient().create(ApiService.class);
+
 
 
         signinTextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(SignupActivity.this,LoginActivity.class);
+
                 startActivity(intent);
             }
         });
@@ -113,11 +118,12 @@ public class SignupActivity extends AppCompatActivity {
                             UserSignupEntities newUser = new UserSignupEntities(username, email, password);
                             userSignupRepository.insert(newUser);
                         }
+                        SignupTask signupTask = new SignupTask(Etd_username.getText().toString(), Etd_email.getText().toString(), Etd_pass.getText().toString(), SignupActivity.this);
+                        signupTask.execute();
 
-                        Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
-                        startActivity(intent);
                     }
                 });
+
 //                Signup Retrofit Api code
 //                // Make API call using Retrofit
 //                Call<String> call = apiInterface.signup(username, Name, Email, Pass);
@@ -158,5 +164,42 @@ public class SignupActivity extends AppCompatActivity {
     // Password validation method
     private boolean isValidPassword(String password, String confirmPassword) {
         return password.equals(confirmPassword);
+    }
+
+    private void signupUser(String username, String email, String password) {
+        Call<UserModel> call = apiService.signup(username, email, password);
+
+        call.enqueue(new Callback<UserModel>() {
+            @Override
+            public void onResponse(Call<UserModel> call, Response<UserModel> response) {
+                if (response.isSuccessful()) {
+                    UserModel user = response.body();
+                    if (user != null) {
+                        // Handle successful signup
+                        Log.d("Signup", "User ID: " + user.getId());
+                    }
+                } else {
+                    // Handle unsuccessful signup
+                    Log.e("Signup", "Error: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserModel> call, Throwable t) {
+                // Handle failure
+                Log.e("Signup", "Failed: " + t.getMessage());
+            }
+        });
+    }
+
+    public void onSignupComplete(String result) {
+        if (result != null && result.startsWith("Error:")) {
+            // Show Toast if there's an error
+            Toast.makeText(SignupActivity.this, result, Toast.LENGTH_SHORT).show();
+        } else {
+            // Proceed with startActivity(intent) if status code is 200
+            Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
+            startActivity(intent);
+        }
     }
 }

@@ -1,8 +1,9 @@
 package com.mart.cart_activity.Api;
-import com.mart.cart_activity.Activity.OtpActivity;
 import com.mart.cart_activity.ApiModel.ContentModel;
 import com.mart.cart_activity.ApiModel.GetProductModel;
 import com.mart.cart_activity.ApiModel.SingleProductModel;
+import com.mart.cart_activity.ApiModel.UpdateUserModel;
+import com.mart.cart_activity.ApiModel.UserModel;
 import com.mart.cart_activity.ApiResponse.CategoriesResponse;
 import com.mart.cart_activity.ApiResponse.LoginResponse;
 import com.mart.cart_activity.ApiResponse.UserUpdateResponse;
@@ -14,11 +15,7 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
-import retrofit2.http.Query;
-
-
-import retrofit2.Call;
-import retrofit2.http.GET;
+import retrofit2.http.PUT;
 import retrofit2.http.Query;
 
 public interface ApiService {
@@ -70,5 +67,30 @@ public interface ApiService {
     Call<List<ContentModel>> getContent();
     @GET("api_searchquery.php") // Replace with your actual PHP script name
     Call<ApiResponse> getWatchesData(@Query("searchQuery") String searchQuery, @Query("page") int page);
+
+    @GET("api_login.php")
+    Call<LoginResponse> login(@Query("email") String email, @Query("password") String password);
+
+    @FormUrlEncoded
+    @PUT("api_userprofile_update.php")
+    Call<UpdateUserModel> updateUserProfile(
+            @Field("userId") int userId,
+            @Field("username") String username,
+            @Field("email") String email,
+            @Field("password") String password,
+            @Field("fullname") String fullname,
+            @Field("nickname") String nickname,
+            @Field("number") String number,
+            @Field("address") String address,
+            @Field("pincode") String pincode
+    );
+
+    @FormUrlEncoded
+    @POST("api_signup.php") // Adjust the endpoint URL accordingly
+    Call<UserModel> signup(
+            @Field("username") String username,
+            @Field("email") String email,
+            @Field("password") String password
+    );
 
 }
