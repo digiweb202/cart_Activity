@@ -166,36 +166,52 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
 //                makepayment();
 //                showGifDialog();
 
-// Example usage to get the wishlist items
-                Set<String> wishlistItems = getWishlistFromSharedPreferences();
+//// Example usage to get the wishlist items
+//                Set<String> wishlistItems = getWishlistFromSharedPreferences();
+//
+//// Iterate through the set and do something with each wishlist item
+//                for (String wishlistItem : wishlistItems) {
+//                    // Perform actions with each wishlist item (e.g., display in UI, log, etc.)
+//                    Log.d("Wishlist::", wishlistItem);
+//                    Toast.makeText(CartActivity.this,"DATA:"+wishlistItem,Toast.LENGTH_SHORT).show();
+//                }
+////                OrderTask orderTask = new OrderTask("2", email, "fsldke3s", "skldfjied", "23", "348743", CartActivity.this);
+////                orderTask.execute();
+//
+//                List<List<String>> productList = ProductStroageList.getInstance().getProductList();
+//                StringBuilder toastMessage = new StringBuilder("Product List:\n");
+//
+//                for (List<String> productPair : productList) {
+//                    // Assuming each product pair has two elements (product ID and seller SKU)
+//                    if (productPair.size() == 2) {
+//                        toastMessage.append("Product ID: ").append(productPair.get(0))
+//                                .append(", Seller SKU: ").append(productPair.get(1))
+//                                .append("\n");
+//
+//                        // Pass product ID and seller SKU as strings to the OrderTask
+//                        OrderTask orderTask = new OrderTask("2", email, productPair.get(0), productPair.get(1), "23", "348743", CartActivity.this);
+//                        orderTask.execute();
+//                    }
+//                }
+//
+//// Display the product list using Toast
+//                Toast.makeText(CartActivity.this, toastMessage.toString(), Toast.LENGTH_SHORT).show();
+                GlobalCartData globalCartData = GlobalCartData.getInstance();
+                List<ProductInfo> productInfoList = globalCartData.getProductInfoList();
 
-// Iterate through the set and do something with each wishlist item
-                for (String wishlistItem : wishlistItems) {
-                    // Perform actions with each wishlist item (e.g., display in UI, log, etc.)
-                    Log.d("Wishlist::", wishlistItem);
-                    Toast.makeText(CartActivity.this,"DATA:"+wishlistItem,Toast.LENGTH_SHORT).show();
+                StringBuilder toastMessage = new StringBuilder("Product Data:\n");
+
+                for (ProductInfo productInfo : productInfoList) {
+                    toastMessage.append("Product ID: ").append(productInfo.getProductId())
+                            .append("\nSeller SKU: ").append(productInfo.getSellerSku())
+                            .append("\nQuantity: ").append(productInfo.getQuantity())
+                            .append("\nPrice: ").append(productInfo.getPrice())
+                            .append("\n\n");
+                    OrderTask orderTask = new OrderTask("2", email, productInfo.getProductId(), productInfo.getSellerSku(), String.valueOf(productInfo.getQuantity()), "0", CartActivity.this);
+                    orderTask.execute();
                 }
-//                OrderTask orderTask = new OrderTask("2", email, "fsldke3s", "skldfjied", "23", "348743", CartActivity.this);
-//                orderTask.execute();
 
-                List<List<String>> productList = ProductStroageList.getInstance().getProductList();
-                StringBuilder toastMessage = new StringBuilder("Product List:\n");
-
-                for (List<String> productPair : productList) {
-                    // Assuming each product pair has two elements (product ID and seller SKU)
-                    if (productPair.size() == 2) {
-                        toastMessage.append("Product ID: ").append(productPair.get(0))
-                                .append(", Seller SKU: ").append(productPair.get(1))
-                                .append("\n");
-
-                        // Pass product ID and seller SKU as strings to the OrderTask
-                        OrderTask orderTask = new OrderTask("2", email, productPair.get(0), productPair.get(1), "23", "348743", CartActivity.this);
-                        orderTask.execute();
-                    }
-                }
-
-// Display the product list using Toast
-                Toast.makeText(CartActivity.this, toastMessage.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), toastMessage.toString(), Toast.LENGTH_LONG).show();
 
             }
         });
@@ -233,7 +249,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
         setupRecyclerView();
         calculatorCart();
 
-
+        onCartUpdated(0);
     }
 
     private void setVariables() {
@@ -321,7 +337,9 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
         double percentTax = 0.02;
         double delivery = 10;
 
-        double itemTotal = Math.round(managementCart.getTotalFee() * 100) / 100;
+        // Retrieve data from Intent
+//        double itemTotal = getIntent().getDoubleExtra("totalAmountData", 0.0);
+        double  itemTotal = Math.round(managementCart.getTotalFee() * 100) / 100;
         tax = Math.round(itemTotal * percentTax * 100) / 100;
         double total = Math.round((itemTotal + tax + delivery) * 100) / 100;
 
@@ -330,6 +348,8 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
         TotalTax.setText("$" + tax);
         TotalAmount.setText("$" + total);
         amTotal = total;
+//        notify();
+//        notifyAll();
     }
 
     @Override
@@ -407,4 +427,10 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
         }
     }
 
+    public void onCartUpdated(int totalAmountData) {
+        // Update your TextView in CartActivity
+        TextView totalAmountTextView = findViewById(R.id.totalFeeTxt);
+        totalAmountTextView.setText(String.valueOf(totalAmountData));
+
+    }
 }
