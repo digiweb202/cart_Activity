@@ -27,16 +27,24 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.mart.cart_activity.Adapter.CartAdapter;
 import com.mart.cart_activity.Adapter.ProductOrderListAdapter;
+import com.mart.cart_activity.Api.ApiService;
+import com.mart.cart_activity.ApiModel.SingleProductModel;
+import com.mart.cart_activity.DatabaseApi.RetrofitClient;
 import com.mart.cart_activity.Entities.UserSignupEntities;
 import com.mart.cart_activity.Helper.ManagmentCart;
 import com.mart.cart_Activity.R;
 import com.mart.cart_activity.Model.UserViewModel;
 import com.razorpay.Checkout;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import pl.droidsonroids.gif.GifImageButton;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -68,6 +76,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
     TextView address;
     RecyclerView listcycle;
     String email;
+    double totalitemamount;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,7 +216,9 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
                             .append("\nQuantity: ").append(productInfo.getQuantity())
                             .append("\nPrice: ").append(productInfo.getPrice())
                             .append("\n\n");
-                    OrderTask orderTask = new OrderTask("2", email, productInfo.getProductId(), productInfo.getSellerSku(), String.valueOf(productInfo.getQuantity()), "0", CartActivity.this);
+//                    TotalTaxTotal.setText(String.valueOf(productInfo.getPrice()));
+//                    totalitemamount += productInfo.getPrice();
+                    OrderTask orderTask = new OrderTask("2", email, productInfo.getProductId(), productInfo.getSellerSku(), String.valueOf(productInfo.getQuantity()), String.valueOf(productInfo.getPrice()), CartActivity.this);
                     orderTask.execute();
                 }
 
@@ -247,9 +258,9 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
         setVariables();
         initList();
         setupRecyclerView();
-        calculatorCart();
-
-        onCartUpdated(0);
+//        calculatorCart();
+//        calculateAndDisplayCart();
+//        onCartUpdated(0);
     }
 
     private void setVariables() {
@@ -333,24 +344,68 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
         }, 3000);
     }
 
-    private void calculatorCart() {
+    private void calculateAndDisplayCart() {
+        final double[] totalAmount = {0};  // Using an array to make it effectively final
+
+        GlobalCartData globalCartData = GlobalCartData.getInstance();
+        List<ProductInfo> productInfoList = globalCartData.getProductInfoList();
+
+        StringBuilder toastMessage = new StringBuilder("Product Data:\n");
+
+        // Make a single Retrofit call for all products
+        Retrofit retrofit = RetrofitClient.getClient();
+        ApiService apiService = retrofit.create(ApiService.class);
+
+        for (ProductInfo productInfo : productInfoList) {
+            toastMessage.append("Product ID: ").append(productInfo.getProductId())
+                    .append("\nSeller SKU: ").append(productInfo.getSellerSku())
+                    .append("\nQuantity: ").append(productInfo.getQuantity())
+                    .append("\nPrice: ").append(productInfo.getPrice())
+                    .append("\n\n");
+
+            // Make the Retrofit call
+            Call<List<SingleProductModel>> call = apiService.getData(productInfo.getProductId(), productInfo.getSellerSku());
+            call.enqueue(new Callback<List<SingleProductModel>>() {
+                @Override
+                public void onResponse(Call<List<SingleProductModel>> call, Response<List<SingleProductModel>> response) {
+                    if (response.isSuccessful()) {
+                        List<SingleProductModel> data = response.body();
+                        // Process the data as needed
+                        if (!data.isEmpty()) {
+                            totalAmount[0] += Double.parseDouble(data.get(0).getYour_Price());
+                            // Perform any additional processing with yourPrice if necessary
+                        }
+                    } else {
+                        // Handle error
+                        Toast.makeText(CartActivity.this, "Error: " + response.message(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<SingleProductModel>> call, Throwable t) {
+
+                }
+            });
+        }
+
         double percentTax = 0.02;
         double delivery = 10;
 
-        // Retrieve data from Intent
-//        double itemTotal = getIntent().getDoubleExtra("totalAmountData", 0.0);
-        double  itemTotal = Math.round(managementCart.getTotalFee() * 100) / 100;
-        tax = Math.round(itemTotal * percentTax * 100) / 100;
-        double total = Math.round((itemTotal + tax + delivery) * 100) / 100;
+        // Calculate tax and total
+        double tax = Math.round(totalitemamount * percentTax * 100) / 100;
+        double total = Math.round((totalitemamount + tax + delivery) * 100) / 100;
 
-        TotalTaxTotal.setText("$" + itemTotal);
+        // Update UI elements
+        TotalTaxTotal.setText("$" + totalitemamount);
         DeliveryTax.setText("$" + delivery);
         TotalTax.setText("$" + tax);
         TotalAmount.setText("$" + total);
+
         amTotal = total;
-//        notify();
-//        notifyAll();
+        // Remove unnecessary comments and notify calls
     }
+
+
 
     @Override
     public void onQuantityChanged(int position, int quantity) {
@@ -358,7 +413,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
         managementCart.updateQuantity(position, quantity);
 
         // Recalculate totals
-        calculatorCart();
+//        calculatorCart();
     }
 
     @Override
@@ -433,4 +488,6 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
         totalAmountTextView.setText(String.valueOf(totalAmountData));
 
     }
+
+
 }

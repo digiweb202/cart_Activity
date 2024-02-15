@@ -18,36 +18,47 @@
         tools:targetApi="31">
         <activity
             android:name="com.mart.cart_activity.Activity.SearchResultActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name="com.mart.cart_activity.Activity.ProductTypeActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name="com.mart.cart_activity.Activity.infinity_product"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name="com.mart.cart_activity.Activity.NotificationDetailsActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name="com.mart.cart_activity.Activity.SingleProductCategories"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name="com.mart.cart_activity.Activity.ProductCategoriesActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name="com.mart.cart_activity.Activity.NotificationActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name="com.mart.cart_activity.Activity.EditProfileActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name="com.mart.cart_activity.Activity.PolicyActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name="com.mart.cart_activity.Activity.OtpActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name="com.mart.cart_activity.Activity.NumberActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name="com.mart.cart_activity.Activity.SplashActivity"
@@ -61,9 +72,11 @@
         </activity>
         <activity
             android:name="com.mart.cart_activity.Activity.ForgetPassActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name="com.mart.cart_activity.Activity.SignupActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name="com.mart.cart_activity.Activity.LoginActivity"
@@ -71,21 +84,27 @@
             android:screenOrientation="portrait"/>
         <activity
             android:name="com.mart.cart_activity.Activity.ProfileActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name="com.mart.cart_activity.Activity.ExplorerActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name="com.mart.cart_activity.Activity.WishlistActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name="com.mart.cart_activity.Activity.CartActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name="com.mart.cart_activity.Activity.DetailActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name="com.mart.cart_activity.Activity.MainActivity"
+            android:screenOrientation="portrait"
             android:exported="true" />
     </application>
 

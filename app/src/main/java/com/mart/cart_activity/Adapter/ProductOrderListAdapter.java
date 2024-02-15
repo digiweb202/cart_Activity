@@ -71,113 +71,7 @@ public class ProductOrderListAdapter extends RecyclerView.Adapter<ProductOrderLi
 //                }
 //        }
 
-        @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-                List<String> productPair = productList.get(position);
-                int quantity;
-                if (productPair != null && productPair.size() == 2) {
-                        String productId = productPair.get(0);
-                        String sellerSku = productPair.get(1);
 
-                        holder.productIdTextView.setText("Product ID: " + productId);
-                        fetchDataForProduct(holder, productId, sellerSku);
-
-                        // Use GlobalCartData to manage product information
-                        int parsedQuantity = Integer.parseInt(quantitys != null ? quantitys : "1");
-                        int parsedPrice = Integer.parseInt(price != null ? price : "0");
-
-                        List<ProductInfo> productInfoList = GlobalCartData.getInstance().getProductInfoList();
-                        boolean productExists = false;
-
-                        for (ProductInfo productInfo : productInfoList) {
-                                if (productInfo.getProductId().equals(productId) && productInfo.getSellerSku().equals(sellerSku)) {
-                                        // Product already exists in the list, update the quantity
-                                        productInfo.setQuantity(productInfo.getQuantity() + parsedQuantity);
-                                        productExists = true;
-                                        break;
-                                }
-                        }
-
-                        if (!productExists) {
-                                // Product doesn't exist in the list, add a new ProductInfo object
-                                ProductInfo newProductInfo = new ProductInfo(productId, sellerSku, parsedQuantity, parsedPrice);
-                                productInfoList.add(newProductInfo);
-                        }
-                }
-                int pricedata;
-                holder.plusCartBtn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                                try {
-                                int quantity = Integer.parseInt(holder.numberItemTxt.getText().toString());
-                                updateItemQuantity(holder, quantity + 1);
-
-                                // Parse price as double and calculate the total
-                                double totalPrice = Double.parseDouble(price) * quantity;
-
-                                // Format the total price as a String
-                                String totalPriceString = String.format("%.2f", totalPrice);
-
-                                // Set the formatted total price to the pricetxt TextView
-//                                holder.pricetxt.setText(totalPriceString);
-
-                                totalAmountData += Double.parseDouble(totalPriceString);
-
-                                if (cartUpdateListener != null) {
-                                        cartUpdateListener.onCartUpdated(totalAmountData);
-                                }
-//                                notifyDataSetChanged();
-
-                                price = String.valueOf(totalAmountData);
-                                quantitys = String.valueOf(quantity);
-                                } catch (NumberFormatException e) {
-                                        // Handle the case where the text is not a valid integer
-                                        // You might want to set a default value or show an error message
-                                        e.printStackTrace(); // Log the exception for debugging purposes
-                                }
-                        }
-                });
-
-                holder.minusCartBtn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                                try {
-                                int quantity = Integer.parseInt(holder.numberItemTxt.getText().toString());
-
-                                // Ensure the quantity remains a minimum of 1
-                                if (quantity > 1) {
-                                        updateItemQuantity(holder, quantity - 1);
-
-                                        // Parse price as double and calculate the total
-                                        double totalPrice = Double.parseDouble(price) * quantity;
-
-                                        // Format the total price as a String
-                                        String totalPriceString = String.format("%.2f", totalPrice);
-
-                                        // Set the formatted total price to the pricetxt TextView
-//                                        holder.pricetxt.setText(totalPriceString);
-//                                        notifyDataSetChanged();
-
-                                        totalAmountData += Integer.parseInt(totalPriceString);
-                                        if (cartUpdateListener != null) {
-                                                cartUpdateListener.onCartUpdated(totalAmountData);
-                                        }
-                                }
-                                price = String.valueOf(totalAmountData);
-                                quantitys = String.valueOf(quantity);
-                                } catch (NumberFormatException e) {
-                                        // Handle the case where the text is not a valid integer
-                                        // You might want to set a default value or show an error message
-                                        e.printStackTrace(); // Log the exception for debugging purposes
-                                }
-                        }
-                });
-//                Intent intent = new Intent(context, CartActivity.class);
-//                intent.putExtra("totalAmountData", totalAmountData);
-//                context.startActivity(intent);
-//                notifyDataSetChanged();
-
-        }
 
         private void fetchDataForProduct(ViewHolder holder, String productID, String sellerSKU) {
                 Call<List<SingleProductModel>> call = apiService.getData(productID, sellerSKU);
@@ -213,6 +107,8 @@ public class ProductOrderListAdapter extends RecyclerView.Adapter<ProductOrderLi
                 holder.pricetxt.setText(productModel.getYour_Price());
                 holder.sellerSkuTextView.setText(productModel.getYour_Price());
                 price = productModel.getYour_Price();
+
+                priceUpdate(productModel.getProduct_ID(),productModel.getSeller_SKU(),productModel.getYour_Price());
         }
 
 
@@ -262,6 +158,137 @@ public class ProductOrderListAdapter extends RecyclerView.Adapter<ProductOrderLi
 
         public void setCartUpdateListener(CartUpdateListener listener) {
                 this.cartUpdateListener = listener;
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+                List<String> productPair = productList.get(position);
+                int quantity;
+                if (productPair != null && productPair.size() == 2) {
+                        String productId = productPair.get(0);
+                        String sellerSku = productPair.get(1);
+
+                        holder.productIdTextView.setText("Product ID: " + productId);
+                        fetchDataForProduct(holder, productId, sellerSku);
+
+                        // Use GlobalCartData to manage product information
+                        int parsedQuantity = Integer.parseInt(quantitys != null ? quantitys : "1");
+                        int parsedPrice = Integer.parseInt(price != null ? price : "0");
+
+                        List<ProductInfo> productInfoList = GlobalCartData.getInstance().getProductInfoList();
+                        boolean productExists = false;
+
+                        for (ProductInfo productInfo : productInfoList) {
+                                if (productInfo.getProductId().equals(productId) && productInfo.getSellerSku().equals(sellerSku)) {
+                                        // Product already exists in the list, update the quantity
+                                        productInfo.setQuantity(productInfo.getQuantity() + parsedQuantity);
+                                        productExists = true;
+                                        break;
+                                }
+                        }
+
+                        if (!productExists) {
+                                // Product doesn't exist in the list, add a new ProductInfo object
+                                ProductInfo newProductInfo = new ProductInfo(productId, sellerSku, parsedQuantity, parsedPrice);
+                                productInfoList.add(newProductInfo);
+                        }
+                }
+                int pricedata;
+                holder.plusCartBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                                try {
+                                        int quantity = Integer.parseInt(holder.numberItemTxt.getText().toString());
+                                        updateItemQuantity(holder, quantity + 1);
+
+                                        // Parse price as double and calculate the total
+                                        double totalPrice = Double.parseDouble(price) * quantity;
+
+                                        // Format the total price as a String
+                                        String totalPriceString = String.format("%.2f", totalPrice);
+
+                                        // Set the formatted total price to the pricetxt TextView
+//                                holder.pricetxt.setText(totalPriceString);
+
+                                        totalAmountData += Double.parseDouble(totalPriceString);
+
+                                        if (cartUpdateListener != null) {
+                                                cartUpdateListener.onCartUpdated(totalAmountData);
+                                        }
+//                                notifyDataSetChanged();
+
+                                        price = String.valueOf(totalAmountData);
+                                        quantitys = String.valueOf(quantity);
+                                } catch (NumberFormatException e) {
+                                        // Handle the case where the text is not a valid integer
+                                        // You might want to set a default value or show an error message
+                                        e.printStackTrace(); // Log the exception for debugging purposes
+                                }
+                        }
+                });
+
+                holder.minusCartBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                                try {
+                                        int quantity = Integer.parseInt(holder.numberItemTxt.getText().toString());
+
+                                        // Ensure the quantity remains a minimum of 1
+                                        if (quantity > 1) {
+                                                updateItemQuantity(holder, quantity - 1);
+
+                                                // Parse price as double and calculate the total
+                                                double totalPrice = Double.parseDouble(price) * quantity;
+
+                                                // Format the total price as a String
+                                                String totalPriceString = String.format("%.2f", totalPrice);
+
+                                                // Set the formatted total price to the pricetxt TextView
+//                                        holder.pricetxt.setText(totalPriceString);
+//                                        notifyDataSetChanged();
+
+                                                totalAmountData += Integer.parseInt(totalPriceString);
+                                                if (cartUpdateListener != null) {
+                                                        cartUpdateListener.onCartUpdated(totalAmountData);
+                                                }
+                                        }
+                                        price = String.valueOf(totalAmountData);
+                                        quantitys = String.valueOf(quantity);
+                                } catch (NumberFormatException e) {
+                                        // Handle the case where the text is not a valid integer
+                                        // You might want to set a default value or show an error message
+                                        e.printStackTrace(); // Log the exception for debugging purposes
+                                }
+                        }
+                });
+//                Intent intent = new Intent(context, CartActivity.class);
+//                intent.putExtra("totalAmountData", totalAmountData);
+//                context.startActivity(intent);
+//                notifyDataSetChanged();
+
+        }
+        public void priceUpdate(String productId, String sellerSku, String priceData) {
+                List<ProductInfo> productInfoList = GlobalCartData.getInstance().getProductInfoList();
+                boolean productExists = false;
+
+                for (ProductInfo productInfo : productInfoList) {
+                        if (productInfo.getProductId().equals(productId) && productInfo.getSellerSku().equals(sellerSku)) {
+                                // Product already exists in the list, update the price
+                                productInfo.setPrice(Double.parseDouble(priceData));
+                                productExists = true;
+                                break;
+                        }
+                }
+
+                if (!productExists) {
+                        // Product doesn't exist in the list, add a new ProductInfo object
+                        // Assuming parsedQuantity and parsedPrice are available in your context
+                        int parsedQuantity = 1; // Update with the actual quantity
+                        double parsedPrice = Double.parseDouble(priceData);
+
+                        ProductInfo newProductInfo = new ProductInfo(productId, sellerSku, parsedQuantity, parsedPrice);
+                        productInfoList.add(newProductInfo);
+                }
         }
 
 
