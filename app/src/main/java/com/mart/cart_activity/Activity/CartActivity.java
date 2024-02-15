@@ -85,19 +85,28 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
         orderButton = findViewById(R.id.button2);
         payment = findViewById(R.id.pay);
         address = findViewById(R.id.textView20);
-        listcycle = findViewById(R.id.cartView);
+        listcycle = findViewById(R.id.cartViews);
 
 
-
-        // Assuming productList is your list of products
+// Assuming you already have productList
         List<List<String>> productList = ProductStroageList.getInstance().getProductList();
 
-        // Create and set up the adapter
+// Create and set up the adapter
         ProductOrderListAdapter productAdapter = new ProductOrderListAdapter(this, productList);
 
+// Find the RecyclerView in your layout
+        RecyclerView listcycle = findViewById(R.id.cartViews);
+
+// Set the layout manager for the RecyclerView (e.g., LinearLayoutManager)
+        listcycle.setLayoutManager(new LinearLayoutManager(this));
+
+// Set the adapter for the RecyclerView
+        listcycle.setAdapter(productAdapter);
+
+
         // Assuming you have a ListView with the id "productListView" in your layout
-        ListView productListView = findViewById(R.id.cartView);
-        productListView.setAdapter(productAdapter);
+//        ListView productListView = findViewById(R.id.cartView);
+//        productListView.setAdapter(productAdapter);
 
 //        TextViewbutton = findViewById(R.id.mycart);
 
@@ -237,7 +246,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
 
 
     private void setupRecyclerView() {
-        RecyclerView cartViews = findViewById(R.id.cartView);
+        RecyclerView cartViews = findViewById(R.id.cartViews);
 
         // Assuming productList is your list of products
         List<List<String>> productList = ProductStroageList.getInstance().getProductList();
@@ -246,8 +255,8 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
         ProductOrderListAdapter productAdapter = new ProductOrderListAdapter(this, productList);
 
         // Assuming you have a ListView with the id "productListView" in your layout
-        ListView productListView = findViewById(R.id.cartView);
-        productListView.setAdapter(productAdapter);
+//        ListView productListView = findViewById(R.id.cartView);
+//        productListView.setAdapter(productAdapter);
 
 //        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
 //        cartView.setLayoutManager(layoutManager);
@@ -390,6 +399,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
         if (result != null && result.startsWith("Error:")) {
             // Show Toast if there's an error
             Toast.makeText(CartActivity.this, result, Toast.LENGTH_SHORT).show();
+
         } else {
             // Proceed with startActivity(intent) if status code is 200
             Intent intent = new Intent(CartActivity.this, CartActivity.class);
