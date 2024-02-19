@@ -84,7 +84,7 @@
                         android:layout_height="0dp"
                         app:layout_constraintWidth_percent="0.9"
                         app:layout_constraintHeight_percent="0.1"
-                        android:hint="PASSWORD"
+                        android:hint="Password"
 
                         app:endIconMode="password_toggle"
                         app:startIconDrawable="@drawable/lock_ic"
