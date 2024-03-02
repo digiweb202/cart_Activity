@@ -28,7 +28,7 @@ public class LoginTask extends AsyncTask<Void, Void, String> {
     protected String doInBackground(Void... voids) {
         try {
             // Construct the URL with parameters
-            String urlString = "http://localhost/NJOYMART_V2.O/Mart-Website%20Frontend/Njoymart-Website-Frontend/nest/demo/apis/api_login.php" +
+            String urlString = "https://test.njoymart.in/apis/api_login.php" +
                     "?username=" + username +
                     "&password=" + password;
 

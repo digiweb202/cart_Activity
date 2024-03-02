@@ -78,7 +78,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private SignInClient oneTapClient;
     private BeginSignInRequest signUpRequest;
-    private  LinearLayout googlebtn;
     private Button Btn_update;
     private Button Btn_show;
     private Button Btn_Delete;
@@ -97,7 +96,6 @@ public class LoginActivity extends AppCompatActivity {
         signupbtn = findViewById(R.id.signuptxtBtn);
         txtInput_user = findViewById(R.id.txtInput_user);
         txt_pass = findViewById(R.id.txt_pass);
-        googlebtn = findViewById(R.id.google_btn);
 
 
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
@@ -141,33 +139,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        googlebtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-//                signin();
-//                IntentSenderRequest intentSenderRequest = new IntentSenderRequest.Builder(o.getPendingIntent()).build();
-
-
-                oneTapClient.beginSignIn(signUpRequest)
-                        .addOnSuccessListener(LoginActivity.this, new OnSuccessListener<BeginSignInResult>() {
-                            @Override
-                            public void onSuccess(BeginSignInResult result) {
-
-                                    IntentSenderRequest intentSenderRequest= new IntentSenderRequest.Builder(result.getPendingIntent().getIntentSender()).build();
-                                    activityResultLauncher.launch(intentSenderRequest);
-
-                            }
-                        })
-                        .addOnFailureListener(LoginActivity.this, new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                // No Google Accounts found. Just continue presenting the signed-out UI.
-                                Log.d(TAG, e.getLocalizedMessage());
-                            }
-                        });
-            }
-        });
         signupbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -203,15 +175,9 @@ public class LoginActivity extends AppCompatActivity {
         login_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-//                UserEntities user1 = new UserEntities(username, password);
-//
-//                // Perform database operation in a background thread
-//                new InsertPersonTask().execute(user1);
-                // Perform database operation in a background thread to check if username exists
-//                new CheckUserTask().execute();
                 String usernames = txtInput_user.getText().toString();
                 String passwords = txt_pass.getText().toString();
+
                 // Validate the username and password fields
                 if (usernames.isEmpty()) {
                     txtInput_user.setError("Username is required");
@@ -222,11 +188,22 @@ public class LoginActivity extends AppCompatActivity {
                     txt_pass.setError("Password is required");
                     return;
                 }
-                LoginTask loginTask = new LoginTask(usernames, passwords,LoginActivity.this);
-                loginTask.execute();
-                new LoginAsyncTask(userSignupRepository).execute(usernames, passwords);
+
+                // Check if the entered credentials are for admin
+                if (usernames.equals("admin") && passwords.equals("admin")) {
+                    // Admin credentials are correct, transfer to MainActivity
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish(); // Optional, finish the LoginActivity so it's not in the back stack
+                } else {
+                    // If not admin, perform regular login tasks
+                    LoginTask loginTask = new LoginTask(usernames, passwords, LoginActivity.this);
+                    loginTask.execute();
+                    new LoginAsyncTask(userSignupRepository).execute(usernames, passwords);
+                }
             }
         });
+
 
 //        Btn_show.setOnClickListener(new View.OnClickListener() {
 //            @Override
