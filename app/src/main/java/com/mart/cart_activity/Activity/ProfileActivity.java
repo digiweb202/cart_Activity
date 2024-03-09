@@ -31,6 +31,7 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView UserName;
     private TextView txtaddress;
     private TextView txtemail;
+    private TextView txtlogout;
     private TextView txtnumber;
     private TextView txtnikname;
     UserViewModel userViewModel;
@@ -46,6 +47,7 @@ public class ProfileActivity extends AppCompatActivity {
         txtemail = findViewById(R.id.emailtxt);
         txtnumber = findViewById(R.id.numbertxt);
         txtnikname = findViewById(R.id.niknametxt);
+        txtlogout = findViewById(R.id.logout);
 
 
 
@@ -81,6 +83,14 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
+        txtlogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+
+                closeApplication();
+            }
+        });
 
 //        userViewModel = new ViewModelProvider(ProfileActivity.this).get(UserViewModel.class);
 //
@@ -135,5 +145,11 @@ public class ProfileActivity extends AppCompatActivity {
 //        Toast.makeText(this,"Home Screen",Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(ProfileActivity.this,MainActivity.class);
         startActivity(intent);
+    }
+
+    // Function to close the entire application
+    private void closeApplication() {
+        // Finish the current activity and all activities below it in the stack
+        finishAffinity();
     }
 }

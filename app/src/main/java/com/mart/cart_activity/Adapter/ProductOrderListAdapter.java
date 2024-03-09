@@ -40,6 +40,30 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+ class GlobalData {
+        private static GlobalData instance;
+
+        private String yourPrice;
+
+        private GlobalData() {
+                // Private constructor to prevent instantiation from outside
+        }
+
+        public static GlobalData getInstance() {
+                if (instance == null) {
+                        instance = new GlobalData();
+                }
+                return instance;
+        }
+
+        public String getYourPrice() {
+                return yourPrice;
+        }
+
+        public void setYourPrice(String yourPrice) {
+                this.yourPrice = yourPrice;
+        }
+}
 
 public class ProductOrderListAdapter extends RecyclerView.Adapter<ProductOrderListAdapter.ViewHolder> {
 
@@ -107,7 +131,8 @@ public class ProductOrderListAdapter extends RecyclerView.Adapter<ProductOrderLi
                 holder.pricetxt.setText(productModel.getYour_Price());
                 holder.sellerSkuTextView.setText(productModel.getYour_Price());
                 price = productModel.getYour_Price();
-
+                // Store the Your_Price value globally
+                GlobalData.getInstance().setYourPrice(productModel.getYour_Price());
                 priceUpdate(productModel.getProduct_ID(),productModel.getSeller_SKU(),productModel.getYour_Price());
         }
 
