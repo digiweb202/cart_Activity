@@ -269,14 +269,29 @@ public class ProductOrderListAdapter extends RecyclerView.Adapter<ProductOrderLi
                                                 String totalPriceString = String.format("%.2f", totalPrice);
 
                                                 // Set the formatted total price to the pricetxt TextView
-//                                        holder.pricetxt.setText(totalPriceString);
-//                                        notifyDataSetChanged();
+                                                // holder.pricetxt.setText(totalPriceString);
 
                                                 totalAmountData += Integer.parseInt(totalPriceString);
                                                 if (cartUpdateListener != null) {
                                                         cartUpdateListener.onCartUpdated(totalAmountData);
                                                 }
+                                        } else if (quantity == 1) {
+                                                // Remove the item from the list
+                                                int adapterPosition = holder.getAdapterPosition();
+                                                if (adapterPosition != RecyclerView.NO_POSITION) {
+                                                        productList.remove(adapterPosition);
+                                                        notifyItemRemoved(adapterPosition);
+                                                        notifyItemRangeChanged(adapterPosition, productList.size());
+
+                                                        // Update the global cart data
+                                                        List<ProductInfo> productInfoList = GlobalCartData.getInstance().getProductInfoList();
+                                                        if (adapterPosition < productInfoList.size()) {
+                                                                ProductInfo productInfo = productInfoList.get(adapterPosition);
+                                                                productInfoList.remove(productInfo);
+                                                        }
+                                                }
                                         }
+
                                         price = String.valueOf(totalAmountData);
                                         quantitys = String.valueOf(quantity);
                                 } catch (NumberFormatException e) {
@@ -286,6 +301,7 @@ public class ProductOrderListAdapter extends RecyclerView.Adapter<ProductOrderLi
                                 }
                         }
                 });
+
 //                Intent intent = new Intent(context, CartActivity.class);
 //                intent.putExtra("totalAmountData", totalAmountData);
 //                context.startActivity(intent);
