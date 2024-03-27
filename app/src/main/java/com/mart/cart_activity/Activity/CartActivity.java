@@ -25,6 +25,10 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.mart.cart_activity.Adapter.CartAdapter;
 import com.mart.cart_activity.Adapter.ProductOrderListAdapter;
 import com.mart.cart_activity.Api.ApiService;
@@ -34,7 +38,9 @@ import com.mart.cart_activity.Entities.UserSignupEntities;
 import com.mart.cart_activity.Helper.ManagmentCart;
 import com.mart.cart_Activity.R;
 import com.mart.cart_activity.Model.UserViewModel;
+import com.mart.cart_activity.Repository.UserSignupRepository;
 import com.razorpay.Checkout;
+import com.razorpay.PaymentResultListener;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
@@ -51,7 +57,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class CartActivity extends AppCompatActivity implements CartAdapter.CartAdapterListener {
+public class CartActivity extends AppCompatActivity implements CartAdapter.CartAdapterListener, PaymentResultListener {
     UserViewModel userViewModel;
     private ImageView Backbtn;
     private ImageView ProfileEdit;
@@ -77,6 +83,10 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
     RecyclerView listcycle;
     String email;
     double totalitemamount;
+    GoogleSignInOptions gso;
+    GoogleSignInClient gsc;
+
+    private UserSignupRepository userSignupRepository;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -172,7 +182,32 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
 
 //                managementCart.removeItem(2);
 //                managementCart.removeAllItems();
-//                makepayment();
+//                AlertDialog.Builder builder = new AlertDialog.Builder(CartActivity.this);
+//                LayoutInflater inflater = getLayoutInflater();
+//                View dialogView = inflater.inflate(R.layout.payment_method_dialog, null);
+//                builder.setView(dialogView);
+//                RadioGroup radioGroup = dialogView.findViewById(R.id.paymentMethodRadioGroup);
+//                Button confirmButton = dialogView.findViewById(R.id.confirmButton);
+//                int selectedRadioButtonId = radioGroup.getCheckedRadioButtonId();
+//
+//                RadioButton selectedRadioButton = dialogView.findViewById(selectedRadioButtonId);
+//                String selectedPaymentMethod = selectedRadioButton.getText().toString();
+//                textView22.setText(selectedPaymentMethod);
+//
+//                // Check if the selected payment method is "Online"
+//                if (selectedPaymentMethod.equals("Online")) {
+//                    // Call makePayment() function only when "Online" option is selected
+//                    makepayment();
+//                }
+                try {
+                   makepayment();
+                } catch (Exception e) {
+                    // Handle the exception here
+                    Log.e("Error","Makepayment()");
+
+                }
+
+
 //                showGifDialog();
 
 //// Example usage to get the wishlist items
@@ -218,7 +253,8 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
                             .append("\n\n");
 //                    TotalTaxTotal.setText(String.valueOf(productInfo.getPrice()));
 //                    totalitemamount += productInfo.getPrice();
-                    OrderTask orderTask = new OrderTask("2", email, productInfo.getProductId(), productInfo.getSellerSku(), String.valueOf(productInfo.getQuantity()), String.valueOf(productInfo.getPrice()), CartActivity.this);
+                    OrderTask orderTask = new OrderTask("2", email, productInfo.getProductId(), productInfo.getSellerSku(),
+                            String.valueOf(productInfo.getQuantity()), String.valueOf(productInfo.getPrice()), CartActivity.this);
                     orderTask.execute();
                 }
 
@@ -356,6 +392,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
         Retrofit retrofit = RetrofitClient.getClient();
         ApiService apiService = retrofit.create(ApiService.class);
 
+
         for (ProductInfo productInfo : productInfoList) {
             toastMessage.append("Product ID: ").append(productInfo.getProductId())
                     .append("\nSeller SKU: ").append(productInfo.getSellerSku())
@@ -437,15 +474,15 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
         try {
             JSONObject options = new JSONObject();
 
-            options.put("name", "Test User");
+            options.put("name", "Njoymart");
             options.put("description", "Reference No. #123456");
             options.put("image", "https://s3.amazonaws.com/rzp-mobile/images/rzp.png");
             // options.put("order_id", "order_DBJOWzybf0sJbb");//from response of step 3.
             options.put("theme.color", "#3399cc");
             options.put("currency", "INR");
-            options.put("amount", amTotal * 100);//300 X 100
+            options.put("amount", "30000");//300 X 100
             options.put("prefill.email", "test@gmail.com");
-            options.put("prefill.contact","000000000");
+            options.put("prefill.contact","8780719280");
             checkout.open(activity, options);
         } catch(Exception e) {
             Log.e("TAG", "Error in starting Razorpay Checkout", e);

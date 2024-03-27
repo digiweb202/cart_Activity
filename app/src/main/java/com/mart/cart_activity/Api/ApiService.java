@@ -27,23 +27,23 @@ public interface ApiService {
             @Field("email") String email,
             @Field("password") String password
     );
-
-    @GET("your_php_script_name.php") // Replace with the actual PHP script name
-    Call<LoginResponse> loginUser(
-            @Query("email") String email,
-            @Query("password") String password
-    );
-    @FormUrlEncoded
-    @POST("your_php_script_name_for_update.php") // Replace with the actual PHP script name for user update
-    Call<UserUpdateResponse> updateUser(
-            @Field("email") String email,
-            @Field("username") String username,
-            @Field("password") String password,
-            @Field("fullname") String fullname,
-            @Field("number") String number,
-            @Field("address") String address,
-            @Field("nickname") String nickname
-    );
+//
+//    @GET("your_php_script_name.php") // Replace with the actual PHP script name
+//    Call<LoginResponse> loginUser(
+//            @Query("email") String email,
+//            @Query("password") String password
+//    );
+//    @FormUrlEncoded
+//    @POST("your_php_script_name_for_update.php") // Replace with the actual PHP script name for user update
+//    Call<UserUpdateResponse> updateUser(
+//            @Field("email") String email,
+//            @Field("username") String username,
+//            @Field("password") String password,
+//            @Field("fullname") String fullname,
+//            @Field("number") String number,
+//            @Field("address") String address,
+//            @Field("nickname") String nickname
+//    );
 
     @GET("api_all_browse_categories.php") // Replace with the actual path to your PHP script
     Call<List<CategoriesResponse>> getCategories();

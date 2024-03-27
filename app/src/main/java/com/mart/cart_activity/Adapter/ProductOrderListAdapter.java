@@ -162,16 +162,16 @@ public class ProductOrderListAdapter extends RecyclerView.Adapter<ProductOrderLi
                         numberItemTxt = itemView.findViewById(R.id.numberItemTxt);
                 }
         }
-        private void updateItemQuantity(ViewHolder holder, int quantity) {
-                holder.numberItemTxt.setText(String.valueOf(quantity));
-
-                // Update the global cart data
-                int adapterPosition = holder.getAdapterPosition();
-                if (adapterPosition != RecyclerView.NO_POSITION) {
-                        ProductInfo productInfo = GlobalCartData.getInstance().getProductInfoList().get(adapterPosition);
-                        productInfo.setQuantity(quantity);
-                }
-        }
+//        private void updateItemQuantity(ViewHolder holder, int quantity) {
+//                holder.numberItemTxt.setText(String.valueOf(quantity));
+//
+//                // Update the global cart data
+//                int adapterPosition = holder.getAdapterPosition();
+//                if (adapterPosition != RecyclerView.NO_POSITION) {
+//                        ProductInfo productInfo = GlobalCartData.getInstance().getProductInfoList().get(adapterPosition);
+//                        productInfo.setQuantity(quantity);
+//                }
+//        }
         @Override
         public int getItemCount() {
                 return productList.size();
@@ -330,6 +330,47 @@ public class ProductOrderListAdapter extends RecyclerView.Adapter<ProductOrderLi
                         ProductInfo newProductInfo = new ProductInfo(productId, sellerSku, parsedQuantity, parsedPrice);
                         productInfoList.add(newProductInfo);
                 }
+        }
+        private void updateItemQuantity(ViewHolder holder, int quantity) {
+                holder.numberItemTxt.setText(String.valueOf(quantity));
+
+                // Get the product price from GlobalData
+                double price = Double.parseDouble(GlobalData.getInstance().getYourPrice());
+
+                // Calculate the total price based on quantity
+                double totalPrice = price * quantity;
+
+                // Update the sellerSkuTextView with the formatted total price
+                holder.sellerSkuTextView.setText(String.format("%.2f", totalPrice));
+
+                // Update the quantity in the global cart data
+                updateGlobalCartData(holder.getAdapterPosition(), quantity);
+
+                // Notify the listener with the updated total amount data
+                if (cartUpdateListener != null) {
+                        cartUpdateListener.onCartUpdated((int) calculateTotalAmount());
+                }
+        }
+
+        // Method to update the quantity in the global cart data
+        private void updateGlobalCartData(int position, int quantity) {
+                if (position != RecyclerView.NO_POSITION) {
+                        List<ProductInfo> productInfoList = GlobalCartData.getInstance().getProductInfoList();
+                        if (position < productInfoList.size()) {
+                                ProductInfo productInfo = productInfoList.get(position);
+                                productInfo.setQuantity(quantity);
+                        }
+                }
+        }
+
+        // Method to calculate the total amount based on the product quantities and prices
+        private double calculateTotalAmount() {
+                double totalAmount = 0;
+                List<ProductInfo> productInfoList = GlobalCartData.getInstance().getProductInfoList();
+                for (ProductInfo productInfo : productInfoList) {
+                        totalAmount += productInfo.getPrice() * productInfo.getQuantity();
+                }
+                return totalAmount;
         }
 
 

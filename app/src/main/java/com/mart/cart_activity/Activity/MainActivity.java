@@ -415,9 +415,9 @@ public class MainActivity extends AppCompatActivity {
 
 private void showImageDialog() {
     // Call this method when internet permission is granted
-    String imageUrl = "https://media.istockphoto.com/id/828088276/vector/qr-code-illustration.jpg?s=612x612&w=0&k=20&c=FnA7agr57XpFi081ZT5sEmxhLytMBlK4vzdQxt8A70M=";
-    String title = "QR Code Image Dialog";
-    String message = "This dialog displays a QR code image.";
+    String imageUrl = "https://i.ibb.co/6swnygX/65fbbff6ae1c3-download.jpg?s=612x612&w=0&k=20&c=FnA7agr57XpFi081ZT5sEmxhLytMBlK4vzdQxt8A70M=";
+    String title = "QR Code";
+    String message = "Njoymart.";
     showDialog(MainActivity.this, imageUrl, title, message);
 }
     private void showDialog(Context context, String imageUrl, String title, String message) {
@@ -472,8 +472,8 @@ private void showImageDialog() {
     private void shareContent() {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Your subject"); // Optional subject
-        shareIntent.putExtra(Intent.EXTRA_TEXT, "Your shared content goes here."); // Content to be shared
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Njoymart"); // Optional subject
+        shareIntent.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=com.mart.cart_activity"); // Content to be shared
 
         // Create a chooser to show available sharing apps
         Intent chooserIntent = Intent.createChooser(shareIntent, "Share via");
