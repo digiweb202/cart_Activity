@@ -3,6 +3,7 @@ package com.mart.cart_activity.Activity;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -20,6 +21,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -84,7 +87,11 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
     String email;
     double totalitemamount;
     GoogleSignInOptions gso;
+
     GoogleSignInClient gsc;
+    TextView subtotal;
+    private ProductOrderListAdapter adapter;
+
 
     private UserSignupRepository userSignupRepository;
     @SuppressLint("MissingInflatedId")
@@ -105,6 +112,47 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
         payment = findViewById(R.id.pay);
         address = findViewById(R.id.textView20);
         listcycle = findViewById(R.id.cartViews);
+        subtotal = findViewById(R.id.textView13);
+
+
+        // Define a LiveData object to hold the total amount data
+
+
+// Inside your onCreate method or any other appropriate place
+// Initialize the totalAmountLiveData object
+
+        // Assuming you have a reference to the CartActivity instance named cartActivityInstance
+        LiveData<Double> totalAmountLiveData = ProductOrderListAdapter.observeTotalAmount();
+
+        totalAmountLiveData.observe(CartActivity.this, new Observer<Double>() {
+            @Override
+            public void onChanged(Double totalAmount) {
+                // Handle the updated total amount here
+                // For example, update UI elements
+                TotalAmount.setText("$" + totalAmount);
+
+                // Display the total amount in a toast message
+                Toast.makeText(CartActivity.this, "Total Amount: $" + String.format("%.2f", totalAmount), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+// Update the value of totalAmountLiveData whenever the total amount changes
+// For example, if you calculate the total amount elsewhere in your code
+// you can update the value of totalAmountLiveData like this:
+// totalAmountLiveData.setValue(newTotalAmount);
+
+// Observe changes to totalAmountLiveData inside the onClick listener of the subtotal button
+        subtotal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Inside the onClick listener, observe totalAmountLiveData
+
+
+            }
+        });
+
+
+
 
 
 // Assuming you already have productList
@@ -525,6 +573,8 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
         totalAmountTextView.setText(String.valueOf(totalAmountData));
 
     }
+
+
 
 
 }

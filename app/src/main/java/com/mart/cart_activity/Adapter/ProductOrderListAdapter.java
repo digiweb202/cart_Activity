@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 
 import com.mart.cart_Activity.R;
 
+import java.util.HashMap;
 import java.util.List;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -23,6 +24,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.RecyclerView;
 import com.mart.cart_Activity.R;
 import com.mart.cart_activity.Activity.CartActivity;
@@ -35,12 +38,13 @@ import com.mart.cart_activity.DatabaseApi.RetrofitClient;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
- class GlobalData {
+class GlobalData {
         private static GlobalData instance;
 
         private String yourPrice;
@@ -66,6 +70,7 @@ import retrofit2.Retrofit;
 }
 
 public class ProductOrderListAdapter extends RecyclerView.Adapter<ProductOrderListAdapter.ViewHolder> {
+        private static MutableLiveData<Double> totalAmountLiveData = new MutableLiveData<>();
 
         private final Context context;
         private final List<List<String>> productList;
@@ -217,6 +222,7 @@ public class ProductOrderListAdapter extends RecyclerView.Adapter<ProductOrderLi
                                 ProductInfo newProductInfo = new ProductInfo(productId, sellerSku, parsedQuantity, parsedPrice);
                                 productInfoList.add(newProductInfo);
                         }
+
                 }
                 int pricedata;
                 holder.plusCartBtn.setOnClickListener(new View.OnClickListener() {
@@ -300,6 +306,7 @@ public class ProductOrderListAdapter extends RecyclerView.Adapter<ProductOrderLi
                                         e.printStackTrace(); // Log the exception for debugging purposes
                                 }
                         }
+
                 });
 
 //                Intent intent = new Intent(context, CartActivity.class);
@@ -345,11 +352,6 @@ public class ProductOrderListAdapter extends RecyclerView.Adapter<ProductOrderLi
 
                 // Update the quantity in the global cart data
                 updateGlobalCartData(holder.getAdapterPosition(), quantity);
-
-                // Notify the listener with the updated total amount data
-                if (cartUpdateListener != null) {
-                        cartUpdateListener.onCartUpdated((int) calculateTotalAmount());
-                }
         }
 
         // Method to update the quantity in the global cart data
@@ -359,20 +361,30 @@ public class ProductOrderListAdapter extends RecyclerView.Adapter<ProductOrderLi
                         if (position < productInfoList.size()) {
                                 ProductInfo productInfo = productInfoList.get(position);
                                 productInfo.setQuantity(quantity);
+
+                                // After updating the quantity, recalculate the total amount
+                                calculateTotalAmount();
                         }
                 }
         }
 
         // Method to calculate the total amount based on the product quantities and prices
-        private double calculateTotalAmount() {
+        private void calculateTotalAmount() {
                 double totalAmount = 0;
                 List<ProductInfo> productInfoList = GlobalCartData.getInstance().getProductInfoList();
-                for (ProductInfo productInfo : productInfoList) {
-                        totalAmount += productInfo.getPrice() * productInfo.getQuantity();
+                if (productInfoList != null && !productInfoList.isEmpty()) {
+                        for (ProductInfo productInfo : productInfoList) {
+                                totalAmount += productInfo.getPrice() * productInfo.getQuantity();
+                        }
                 }
-                return totalAmount;
+                // Set the value of totalAmountLiveData
+                totalAmountLiveData.setValue(totalAmount);
         }
 
+        // Method to observe the total amount LiveData
+        public static LiveData<Double> observeTotalAmount() {
+                return totalAmountLiveData;
+        }
 
 
 }
