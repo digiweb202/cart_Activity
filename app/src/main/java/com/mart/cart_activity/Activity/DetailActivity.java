@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.Image;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -52,6 +53,7 @@ public class DetailActivity extends AppCompatActivity {
     String productID;
     String sellerSKU;
     Button buyAdd;
+    ImageView shareImageView;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -107,7 +109,7 @@ public class DetailActivity extends AppCompatActivity {
 //        getBundles();
 //        setupUI();
         managmentCart= new ManagmentCart(this);
-        ImageView shareImageView = findViewById(R.id.imageView8);
+         shareImageView = findViewById(R.id.imageView8);
         gotocart = findViewById(R.id.go_to_cart);
 
 
@@ -123,20 +125,40 @@ public class DetailActivity extends AppCompatActivity {
         shareImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String productId = getIntent().getStringExtra("PRODUCT_ID");
+                String seller_sku = getIntent().getStringExtra("SELLER_SKU");
                 // Perform action when the shareImageView is clicked
-                shareContent(); // You can define this method to handle the click action
+                shareContent(productId,seller_sku ); // You can define this method to handle the click action
             }
         });
+
+
+        // ATTENTION: This was auto-generated to handle app links.
+        Intent appLinkIntent = getIntent();
+        String appLinkAction = appLinkIntent.getAction();
+        Uri appLinkData = appLinkIntent.getData();
         // Create an instance of the ApiService interface
         ApiService apiService = retrofit.create(ApiService.class);
 
         // Get parameters from your API input method
         productID = productId;
         sellerSKU = seller_sku;
-
+        Call<List<SingleProductModel>> call;
+        Intent intent = getIntent();
+        Uri data = intent.getData();
+        if (data != null) {
+            String productIds = data.getQueryParameter("id");
+            String sellerSku = data.getQueryParameter("sku");
+            // Now you have the product ID and seller SKU, do whatever you need with them
+            call = apiService.getData(productIds, sellerSku);
+            productID = productIds;
+            sellerSKU = sellerSku;
+        }else{
+            call = apiService.getData(productID, sellerSKU);
+        }
 
         // Make the Retrofit call
-        Call<List<SingleProductModel>> call = apiService.getData(productID, sellerSKU);
+//        Call<List<SingleProductModel>> call = apiService.getData(productID, sellerSKU);
         call.enqueue(new Callback<List<SingleProductModel>>() {
             @Override
             public void onResponse(Call<List<SingleProductModel>> call, Response<List<SingleProductModel>> response) {
@@ -172,6 +194,7 @@ public class DetailActivity extends AppCompatActivity {
             }
         });
 
+
     }
 
     private void getBundles() {
@@ -190,14 +213,14 @@ public class DetailActivity extends AppCompatActivity {
 
 
     // Method to share content
-    private void shareContent() {
+    public void shareContent(String productid,String sellersku) {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Your subject"); // Optional subject
-        shareIntent.putExtra(Intent.EXTRA_TEXT, "Share play store link your contact people with//:ddddd"); // Content to be shared
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Njoymart"); // Optional subject
+        shareIntent.putExtra(Intent.EXTRA_TEXT, "https://njoymart.in/product?id="+productid+"&sku="+sellersku+"\n"); // Content to be shared
 
         // Create a chooser to show available sharing apps
-        Intent chooserIntent = Intent.createChooser(shareIntent, "Share via");
+        Intent chooserIntent = Intent.createChooser(shareIntent, "link");
 
         // Check if there are apps that can handle the intent
         if (shareIntent.resolveActivity(getPackageManager()) != null) {

@@ -19,7 +19,7 @@
         <activity
             android:name="com.mart.cart_activity.Activity.SearchResultActivity"
             android:screenOrientation="portrait"
-            android:exported="false" />
+            android:exported="false"></activity>
         <activity
             android:name="com.mart.cart_activity.Activity.ProductTypeActivity"
             android:screenOrientation="portrait"
@@ -81,7 +81,7 @@
         <activity
             android:name="com.mart.cart_activity.Activity.LoginActivity"
             android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.mart.cart_activity.Activity.ProfileActivity"
             android:screenOrientation="portrait"
@@ -101,7 +101,21 @@
         <activity
             android:name="com.mart.cart_activity.Activity.DetailActivity"
             android:screenOrientation="portrait"
-            android:exported="false" />
+            android:exported="true">
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+<!--                <data android:scheme="http" />-->
+<!--                <data android:host="test.njoymart.in" />-->
+<!--                <data android:pathPattern="/AppData" />-->
+                <data
+                    android:host="njoymart.in"
+                    android:scheme="https" />
+            </intent-filter>
+        </activity>
         <activity
             android:name="com.mart.cart_activity.Activity.MainActivity"
             android:screenOrientation="portrait"
